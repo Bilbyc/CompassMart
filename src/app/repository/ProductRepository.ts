@@ -6,11 +6,11 @@ class ProductRepository {
     return ProductSchema.create(payload);
   }
 
-  async update(payload: IProduct, productID: string): Promise<any> {
+  async update(payload: IProduct, productID: string): Promise<IProductResponse | null> {
     return ProductSchema.findByIdAndUpdate(productID, payload, { new: true });
   }
 
-  async updateOne(payload: IProduct, productID: string): Promise<any> {
+  async updateOne(payload: IProduct, productID: string): Promise<IProductResponse | null> {
     return ProductSchema.findByIdAndUpdate(productID, payload, { new: true });
   }
 

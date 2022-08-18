@@ -7,7 +7,7 @@ class ProductService {
     return result;
   }
 
-  async update(payload: IProduct, productId: string): Promise<IProductResponse> {
+  async update(payload: IProduct, productId: string): Promise<IProductResponse | null> {
     payload.stock_control_enabled = payload.qtd_stock > 0 ? true : false;
     payload.updatedAt = new Date();
 
@@ -15,7 +15,7 @@ class ProductService {
     return result;
   }  
   
-  async updateOne(payload: IProduct, productId: string): Promise<IProductResponse> {
+  async updateOne(payload: IProduct, productId: string): Promise<IProductResponse | null> {
     payload.stock_control_enabled = payload.qtd_stock > 0 ? true : false;
     payload.updatedAt = new Date();
 
