@@ -13,7 +13,15 @@ class ProductService {
 
     const result = await ProductRepository.update(payload, productId);
     return result;
-  }    
+  }  
+  
+  async updateOne(payload: IProduct, productId: string): Promise<IProductResponse> {
+    payload.stock_control_enabled = payload.qtd_stock > 0 ? true : false;
+    payload.updatedAt = new Date();
+
+    const result = await ProductRepository.updateOne(payload, productId);
+    return result;
+  }
 }
 
 export default new ProductService();
