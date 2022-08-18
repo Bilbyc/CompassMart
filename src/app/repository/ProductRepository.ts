@@ -13,6 +13,10 @@ class ProductRepository {
   async updateOne(payload: IProduct, productID: string): Promise<any> {
     return ProductSchema.findByIdAndUpdate(productID, payload, { new: true });
   }
+
+  async get() {
+    return ProductSchema.find();
+  }
 }
 
 export default new ProductRepository();

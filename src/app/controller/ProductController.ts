@@ -33,6 +33,15 @@ class ProductController {
       return res.status(500).json({ error });
     }
   }
+
+  async get(req, res){
+    try{
+      const result = await ProductService.get();
+      return res.status(200).json(result);
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
+  }
     
 }
 
