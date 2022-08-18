@@ -6,7 +6,7 @@ export interface IProduct {
   brand: string;
   department: string;
   price: number;
-  qtd_Stock: number;
+  qtd_stock: number;
   stock_control_enabled: boolean;
   bar_codes: string;
   createdAt: Date;
@@ -20,7 +20,7 @@ export interface IProductResponse {
   department: string;
   brand: string;
   price: number;
-  qtd_Stock: number;
+  qtd_stock: number;
   bar_codes: string;
   createdAt: Date;
   updatedAt: Date;
