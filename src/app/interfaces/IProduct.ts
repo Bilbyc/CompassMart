@@ -7,10 +7,14 @@ export interface IProduct {
   department: string;
   price: number;
   qtd_Stock: number;
+  stock_control_enabled: boolean;
   bar_codes: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IProductResponse {
+  _id: Types.ObjectId;
   title: string;
   description: string;
   department: string;
@@ -18,6 +22,6 @@ export interface IProductResponse {
   price: number;
   qtd_Stock: number;
   bar_codes: string;
-  _id: Types.ObjectId;
-  __v?: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
