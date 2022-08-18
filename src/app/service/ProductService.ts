@@ -6,6 +6,11 @@ class ProductService {
     const result = await ProductRepository.create(payload);
     return result;
   }
+
+  async update(payload: IProduct, productId: string): Promise<IProductResponse> {
+    const result = await ProductRepository.update(payload, productId);
+    return result;
+  }
 }
 
 export default new ProductService();
