@@ -53,6 +53,16 @@ class ProductController {
     }
   }
 
+  async getOne(req, res){
+    try{
+      const productId: string = req.params.id;
+      const result = await ProductService.getOne(productId);
+      return res.status(200).json(result);
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
+  }
+
   
     
 }
