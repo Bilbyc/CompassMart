@@ -17,6 +17,10 @@ class ProductRepository {
   async get() {
     return ProductSchema.find({ stock_control_enabled: true });
   }
+
+  async getLowStock() {
+    return ProductSchema.find();
+  }
 }
 
 export default new ProductRepository();

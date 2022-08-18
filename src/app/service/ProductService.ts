@@ -27,6 +27,11 @@ class ProductService {
     const result = await ProductRepository.get();
     return result;
   }
+
+  async getLowStock() {
+    const result = await ProductRepository.getLowStock();
+    return result;
+  }
 }
 
 export default new ProductService();
