@@ -7,6 +7,8 @@ import patchValidation from '../app/validations/product/patch';
 const router = Router();
 
 router.post('/api/v1/product', createValidation, ProductController.create);
+router.get('/api/v1/product/low_stock', ProductController.getLowStock);
+router.get('/api/v1/product', ProductController.get);
 router.put('/api/v1/product/:id', putValidation, ProductController.update);
 router.patch('/api/v1/product/:id', patchValidation, ProductController.update)
 

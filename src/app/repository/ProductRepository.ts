@@ -13,6 +13,14 @@ class ProductRepository {
   async updateOne(payload: IProduct, productID: string): Promise<any> {
     return ProductSchema.findByIdAndUpdate(productID, payload, { new: true });
   }
+
+  async get() {
+    return ProductSchema.find({ stock_control_enabled: true });
+  }
+
+  async getLowStock() {
+    return ProductSchema.find({ qtd_stock: { $lt: 100 }, stock_control_enabled: true }).sort({ qtd_stock: 'asc' });
+  }
 }
 
 export default new ProductRepository();
