@@ -32,6 +32,11 @@ class ProductService {
     const result = await ProductRepository.getLowStock();
     return result;
   }
+
+  async getOne(productId: string) {
+    const result = await ProductRepository.getOne(productId);
+    return result;
+  }
 }
 
 export default new ProductService();
