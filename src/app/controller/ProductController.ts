@@ -1,4 +1,4 @@
-import { IProduct } from './../interfaces/IProduct';
+import { IProduct, IProductResponse } from './../interfaces/IProduct';
 import ProductService from '../service/ProductService';
 
 class ProductController {
@@ -36,7 +36,8 @@ class ProductController {
 
   async get(req, res){
     try{
-      const result = await ProductService.get();
+      const payload: IProduct = req.query;
+      const result = await ProductService.get(payload);
       return res.status(200).json(result);
     } catch (error) {
       return res.status(500).json({ error });

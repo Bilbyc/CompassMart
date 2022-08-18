@@ -14,8 +14,10 @@ class ProductRepository {
     return ProductSchema.findByIdAndUpdate(productID, payload, { new: true });
   }
 
-  async get() {
-    return ProductSchema.find({ stock_control_enabled: true });
+  async get(payload: IProduct) {
+    const result = ProductSchema.find( {stock_control_enabled: true} );
+
+    return result.find(payload);
   }
 
   async getLowStock() {

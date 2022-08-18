@@ -23,8 +23,8 @@ class ProductService {
     return result;
   }
 
-  async get() {
-    const result = await ProductRepository.get();
+  async get(payload: IProduct) {
+    const result = await ProductRepository.get(payload);
     return result;
   }
 
