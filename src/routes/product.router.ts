@@ -4,6 +4,6 @@ import createValidation from '../app/validations/product/create';
 
 const router = Router();
 
-router.post('/product', createValidation, ProductController.create);
+router.post('/api/v1/product', createValidation, ProductController.create);
 
 export default router;
