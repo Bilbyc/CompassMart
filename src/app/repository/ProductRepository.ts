@@ -10,7 +10,7 @@ class ProductRepository {
     return ProductSchema.findByIdAndUpdate(productID, payload, { new: true });
   }
 
-  async updateOne(payload: IProduct, productID: string): Promise<IProductResponse | null> {
+  async patch(payload: IProduct, productID: string): Promise<IProductResponse | null> {
     return ProductSchema.findByIdAndUpdate(productID, payload, { new: true });
   }
 

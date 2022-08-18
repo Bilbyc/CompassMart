@@ -23,11 +23,11 @@ class ProductController {
     }
   }
 
-  async updateOne(req, res) {
+  async updatePatch(req, res) {
     try {
       const productId: string = req.params.id;
       const payload: IProduct = req.body;
-      const result = await ProductService.updateOne(payload, productId);
+      const result = await ProductService.patch(payload, productId);
       return res.status(200).json(result);
     } catch (error) {
       return res.status(500).json({ error });

@@ -15,11 +15,11 @@ class ProductService {
     return result;
   }  
   
-  async updateOne(payload: IProduct, productId: string): Promise<IProductResponse | null> {
+  async patch(payload: IProduct, productId: string): Promise<IProductResponse | null> {
     payload.stock_control_enabled = payload.qtd_stock > 0 ? true : false;
     payload.updatedAt = new Date();
 
-    const result = await ProductRepository.updateOne(payload, productId);
+    const result = await ProductRepository.patch(payload, productId);
     return result;
   }
 
