@@ -19,7 +19,7 @@ class ProductRepository {
   }
 
   async getLowStock() {
-    return ProductSchema.find();
+    return ProductSchema.find({ qtd_stock: { $lt: 100 }, stock_control_enabled: true }).sort({ qtd_stock: 'asc' });
   }
 }
 
