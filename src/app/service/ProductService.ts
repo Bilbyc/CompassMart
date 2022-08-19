@@ -37,6 +37,11 @@ class ProductService {
     const result = await ProductRepository.getOne(productId);
     return result;
   }
+
+  async delete(productId: string){
+    const result = await ProductRepository.delete(productId);
+    return result; 
+  }
 }
 
 export default new ProductService();

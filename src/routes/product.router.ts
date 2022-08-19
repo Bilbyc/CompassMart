@@ -12,5 +12,6 @@ router.get('/api/v1/product/low_stock', ProductController.getLowStock);
 router.get('/api/v1/product', ProductController.get);
 router.put('/api/v1/product/:id', putValidation, ProductController.update);
 router.patch('/api/v1/product/:id', patchValidation, ProductController.update)
+router.delete('/api/v1/product/:id', ProductController.delete)
 
 export default router;
