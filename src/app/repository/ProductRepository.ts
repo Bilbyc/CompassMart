@@ -27,6 +27,10 @@ class ProductRepository {
   async getOne (productId: string) {
     return ProductSchema.findById(productId)
   }
+
+  async delete (productId: string) {
+    return ProductSchema.findByIdAndDelete(productId)
+  }
 }
 
 export default new ProductRepository()
