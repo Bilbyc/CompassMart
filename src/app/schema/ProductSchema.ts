@@ -1,5 +1,5 @@
-import mongoose, { Schema } from 'mongoose';
-import { IProduct } from '../interfaces/IProduct';
+import mongoose, { Schema } from 'mongoose'
+import { IProduct } from '../interfaces/IProduct'
 
 const schema = new Schema<IProduct>({
   title: { type: String, required: true },
@@ -11,8 +11,8 @@ const schema = new Schema<IProduct>({
   bar_codes: { type: String, required: true, length: 13, unique: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
-}, { versionKey: false });
+}, { versionKey: false })
 
-const Product = mongoose.model<IProduct>('Product', schema);
+const Product = mongoose.model<IProduct>('Product', schema)
 
-export default Product;
+export default Product
