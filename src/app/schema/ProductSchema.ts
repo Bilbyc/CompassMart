@@ -1,9 +1,11 @@
-import mongoose, { Schema } from 'mongoose'
+import mongoose, { PaginateModel, Schema } from 'mongoose'
 import { IProduct } from '../interfaces/IProduct'
+import mongoosePaginate from 'mongoose-paginate-v2'
 
 const schema = new Schema<IProduct>({
   title: { type: String, required: true },
   description: { type: String, required: true },
+  department: { type: String, required: true},
   brand: { type: String, required: true },
   price: { type: Number, required: true },
   qtd_stock: { type: Number, required: true },
@@ -13,6 +15,8 @@ const schema = new Schema<IProduct>({
   updatedAt: { type: Date, default: Date.now }
 }, { versionKey: false })
 
-const Product = mongoose.model<IProduct>('Product', schema)
+schema.plugin(mongoosePaginate)
+
+const Product = mongoose.model<IProduct, PaginateModel<IProduct>>('Product', schema)
 
 export default Product
