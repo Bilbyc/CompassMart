@@ -36,8 +36,9 @@ class ProductController {
 
   async get (req, res) {
     try {
+      const page = parseInt(req.query.page)
       const payload: IProduct = req.query
-      const result = await ProductService.get(payload)
+      const result = await ProductService.get(payload, page)
       return res.status(200).json(result)
     } catch (error) {
       return res.status(500).json({ error })

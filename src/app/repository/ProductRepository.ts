@@ -14,10 +14,30 @@ class ProductRepository {
     return ProductSchema.findByIdAndUpdate(productID, payload, { new: true })
   }
 
-  async get (payload: IProduct) {
-    const result = ProductSchema.find({ stock_control_enabled: true })
-
-    return result.find(payload)
+  async get (payload: IProduct, page) {
+    
+    const myCustomLabels = {
+      totalDocs: 'total',
+      docs: 'Products',
+      limit: 'limit',
+      page: 'offset',
+      nextPage: 'false',
+      prevPage: 'false',
+      totalPages: 'offsets',
+      pagingCounter: 'false'
+      
+    };
+    
+    const options = {
+      page: page || 1,
+      limit: 50,
+      query: { payload },
+      customLabels: myCustomLabels,
+    };
+    const validStockProducts = ProductSchema.find({ stock_control_enabled: true })
+    const result = validStockProducts.find(payload)
+    
+    return ProductSchema.paginate( result , options)
   }
 
   async getLowStock () {
