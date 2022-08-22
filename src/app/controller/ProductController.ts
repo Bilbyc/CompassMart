@@ -19,7 +19,12 @@ class ProductController {
       const result = await ProductService.update(payload, productId)
       return res.status(200).json(result)
     } catch (error) {
-      return res.status(500).json({ error })
+      return res.status(error.statusCode||500).json({ 
+        message: error.name,
+        details: [
+          { message: error.message}
+        ]
+       })
     }
   }
 
@@ -30,7 +35,12 @@ class ProductController {
       const result = await ProductService.patch(payload, productId)
       return res.status(200).json(result)
     } catch (error) {
-      return res.status(500).json({ error })
+      return res.status(error.statusCode||500).json({ 
+        message: error.name,
+        details: [
+          { message: error.message}
+        ]
+       })
     }
   }
 
@@ -60,7 +70,12 @@ class ProductController {
       const result = await ProductService.getOne(productId)
       return res.status(200).json(result)
     } catch (error) {
-      return res.status(500).json({ error })
+      return res.status(error.statusCode||500).json({ 
+        message: error.name,
+        details: [
+          { message: error.message}
+        ]
+       })
     }
   }
 
@@ -71,7 +86,12 @@ class ProductController {
 
       return res.status(204).json()
     } catch (error) {
-      return res.status(500).json({ error })
+      return res.status(error.statusCode||500).json({ 
+        message: error.name,
+        details: [
+          { message: error.message}
+        ]
+       })
     }
   }
 }
