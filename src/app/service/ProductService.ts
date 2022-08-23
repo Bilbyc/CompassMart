@@ -2,6 +2,7 @@ import BadRequestError from '../errors/BadRequestError'
 import { Types } from 'mongoose'
 import { IProductResponse, IProduct } from '../interfaces/IProduct'
 import ProductRepository from '../repository/ProductRepository'
+import NotFoundError from '../errors/NotFoundError'
 
 
 class ProductService {
@@ -13,6 +14,11 @@ class ProductService {
   async update (payload: IProduct, productId: string): Promise<IProductResponse | null> {
     if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID');
 
+    const foundProduct = await ProductRepository.getOne(productId)
+    if (!foundProduct) {
+      throw new NotFoundError('Product doesnt exist or was deleted')
+    }
+
     payload.stock_control_enabled = payload.qtd_stock > 0
     payload.updatedAt = new Date()
 
@@ -21,7 +27,12 @@ class ProductService {
   }
 
   async patch (payload: IProduct, productId: string): Promise<IProductResponse | null> {
-    if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID');
+     if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID');
+
+    const foundProduct = await ProductRepository.getOne(productId)
+    if (!foundProduct) {
+      throw new NotFoundError('Product doesnt exist or was deleted')
+    }
     
     payload.stock_control_enabled = payload.qtd_stock > 0
     payload.updatedAt = new Date()
@@ -42,6 +53,11 @@ class ProductService {
 
   async getOne (productId: string) {
     if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID');
+
+    const foundProduct = await ProductRepository.getOne(productId)
+    if (!foundProduct) {
+      throw new NotFoundError('Product doesnt exist or was deleted')
+    }
     
     const result = await ProductRepository.getOne(productId)
     return result
@@ -49,6 +65,11 @@ class ProductService {
 
   async delete (productId: string) {
     if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID');
+
+    const foundProduct = await ProductRepository.getOne(productId)
+    if (!foundProduct) {
+      throw new NotFoundError('Product doesnt exist')
+    }
 
     const result = await ProductRepository.delete(productId)
     return result
