@@ -4,13 +4,13 @@ import { Request, Response, NextFunction } from 'express'
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {
     const schema = Joi.object({
-      title: Joi.string(),
-      description: Joi.string(),
-      department: Joi.string(),
-      brand: Joi.string(),
-      price: Joi.number().min(0.01).max(1000),
-      qtd_stock: Joi.number().min(0).max(100000),
-      bar_codes: Joi.string().length(13)
+      title: Joi.string().disallow(null),
+      description: Joi.string().disallow(null),
+      department: Joi.string().disallow(null),
+      brand: Joi.string().disallow(null),
+      price: Joi.number().min(0.01).max(1000).disallow(null),
+      qtd_stock: Joi.number().min(0).max(100000).disallow(null),
+      bar_codes: Joi.string().length(13).disallow(null)
     })
 
     const { error } = await schema.validate(req.body, { abortEarly: false })
