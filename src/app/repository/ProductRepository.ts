@@ -20,24 +20,20 @@ class ProductRepository {
       totalDocs: 'total',
       docs: 'Products',
       limit: 'limit',
-      page: 'offset',
-      nextPage: 'false',
-      prevPage: 'false',
       totalPages: 'offsets',
-      pagingCounter: 'false'
-      
-    };
+      page: 'offset',
+      nextPage: false,
+      prevPage: false,
+      pagingCounter: false,
+      };
     
     const options = {
       page: page || 1,
       limit: 50,
-      query: { payload },
       customLabels: myCustomLabels,
     };
-    const validStockProducts = ProductSchema.find({ stock_control_enabled: true })
-    const result = validStockProducts.find(payload)
+    return ProductSchema.paginate({ $and: [payload, { stock_control_enabled: true }]}, options)
     
-    return ProductSchema.paginate( result , options)
   }
 
   async getLowStock () {
@@ -51,6 +47,12 @@ class ProductRepository {
   async delete (productId: string) {
     return ProductSchema.findByIdAndDelete(productId)
   }
+
+  async createCSV (products: any): Promise<IProductResponse> {
+    return ProductSchema.create(products)
+  }
+
+  
 }
 
 export default new ProductRepository()
