@@ -79,7 +79,6 @@ class ProductService {
     return result
   }
 
-  ///////////////////
   async createCSV (file: any): Promise<any> {
    
     const { buffer } = file
@@ -95,16 +94,17 @@ class ProductService {
     const products: any[] = []
 
     for await(let line of productsLine) {
-      const productLineSplit = line.split(",")
-        
+      const productLineSplit = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+      console.log(productLineSplit)
+     
       products.push({ 
-        title: productLineSplit[0],
+        title: productLineSplit[0].replace(/["\\]+/g, ''),
         description: productLineSplit[1],
         department: productLineSplit[2],
         brand: productLineSplit[3],
-        price: Number(productLineSplit[4]),
+        price: Number(productLineSplit[4].replace(',', '.').replace(/['"]+/g, '')),
         qtd_stock: Number(productLineSplit[5]),
-        bar_codes: productLineSplit[6]
+        bar_codes: productLineSplit[6].replace(/["\\]+/g, '')
 
       })
       
@@ -118,7 +118,7 @@ class ProductService {
       let productErrors = 0;
       
       async function checkNullOrUndefined (value: object) {
-        if (value == null || !value ) {
+        if (!value || value === undefined) {
           productErrors++
           errorCounter++
           return true
