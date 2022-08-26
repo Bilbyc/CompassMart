@@ -94,6 +94,21 @@ class ProductController {
        })
     }
   }
+
+  //////////////////////
+  async createCSV (req, res) {
+    try {
+      const { file } = req
+      
+      const result = await ProductService.createCSV(file)
+  
+      return res.status(201).json(result)
+    } catch (error) {
+      return res.status(500).json({ error })
+    } 
+  }
 }
 
 export default new ProductController()
+
+
