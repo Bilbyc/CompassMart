@@ -48,8 +48,12 @@ class ProductRepository {
     return ProductSchema.findByIdAndDelete(productId)
   }
 
-  async createCSV (products: any): Promise<IProductResponse> {
-    return ProductSchema.create(products)
+  async createCSV (products: IProduct): Promise<Array<object>> {
+    return ProductSchema.insertMany(products);
+  }
+
+  async getByBarCode (barCode: string): Promise<IProductResponse | null> {
+    return ProductSchema.findOne({bar_codes: barCode})
   }
 
   
