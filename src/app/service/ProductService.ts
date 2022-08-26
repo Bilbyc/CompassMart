@@ -7,6 +7,7 @@ import NotFoundError from '../errors/NotFoundError'
 import readline from 'readline'
 
 
+
 class ProductService {
   async create (payload: IProduct): Promise<IProductResponse> {
 
@@ -79,23 +80,22 @@ class ProductService {
   }
 
   ///////////////////
-  async createCSV (file: any): Promise<IProduct> {
-    
+  async createCSV (file: any): Promise<any> {
+   
     const { buffer } = file
 
     const readableFile = new Readable();
     readableFile.push(buffer)
     readableFile.push(null)
 
-    const producstLine = readline.createInterface({
+    const productsLine = readline.createInterface({
     input: readableFile
     })
 
     const products: any[] = []
 
-    for await(let line of producstLine) {
+    for await(let line of productsLine) {
       const productLineSplit = line.split(",")
-      console.log(productLineSplit[1])
         
       products.push({ 
         title: productLineSplit[0],
@@ -107,13 +107,96 @@ class ProductService {
         bar_codes: productLineSplit[6]
 
       })
+      
     }
+    
+    const error: any[] = []
+    let errorCounter: number = 0
+    let successCounter: number = 0
+    
+    for (let i = 0; i<products.length; i++){
+      let productErrors = 0;
+      
+      async function checkNullOrUndefined (value: object) {
+        if (value == null || !value ) {
+          productErrors++
+          errorCounter++
+          return true
+        } 
+      }
 
-    //console.log(products)
+      if(await checkNullOrUndefined(products[i].title)) {
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'Title is null or undefined'})}
+      
+      if(await checkNullOrUndefined(products[i].description)) {
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'Description is null or undefined'})}
+      
+      if(await checkNullOrUndefined(products[i].department)) {
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'Department is null or undefined'})}
+      
+      if(await checkNullOrUndefined(products[i].brand)) {
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'Brand is null or undefined'})}
+      
+      if(await checkNullOrUndefined(products[i].price)) {
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'Price is null or undefined'})}
+      
+      if(await checkNullOrUndefined(products[i].qtd_stock)) {
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'Qtd Stock is null or undefined'})}
 
-    const result = await ProductRepository.createCSV(products)
-    return result;
+      if(await checkNullOrUndefined(products[i].bar_codes)) {
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'Bar Codes is null or undefined'})}
+
+        
+      if(products[i].qtd_stock < 1 || products[i].qtd_stock > 100000) {
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'Stock quantity must be minimum 1 and at max 100000' });
+        errorCounter++
+        productErrors++
+      }
+      
+      if(products[i].bar_codes.length != 13){
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'bar codes length must be 13'});
+        errorCounter++
+        productErrors++  
+      }
+
+      if(products[i].bar_codes.length == 13 && !products[i].bar_codes.match(/^[0-9]{13}$/)){
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'bar codes must be numbers'});
+        errorCounter++
+        productErrors++  
+      }
+
+      if(products[i].qtd_stock < 0 || products[i].qtd_stock > 100000){
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'stock must be between 0 and 100.000'});
+        errorCounter++
+        productErrors++
+      }
+
+      if(products[i].price < 0.01 || products[i].price > 1000){
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'price must be between 0.01 and 1000'});
+        errorCounter++
+        productErrors++
+      }
+
+      let foundBarCode = await ProductRepository.getByBarCode(products[i].bar_codes)
+      if(foundBarCode){
+        error.push({title: products[i].title, bar_code: products[i].bar_codes, error: 'bar code already exists'});
+        errorCounter++
+        productErrors++
+
+      }
+      else if (productErrors == 0){
+        ProductRepository.create(products[i])
+        successCounter++
+      }
+
+    }
+    
+    return {sucess: successCounter, 
+      errors: errorCounter, 
+      error_details: error
+    }
   }
+
 }
 
 export default new ProductService()
