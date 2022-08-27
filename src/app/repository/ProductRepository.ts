@@ -14,7 +14,7 @@ class ProductRepository {
     return ProductSchema.findByIdAndUpdate(productID, payload, { new: true })
   }
 
-  async get (payload: IProduct, offset: number) {
+  async get (brand: string , department: string, offset: number) {
     
     const myCustomLabels = {
       totalDocs: 'total',
@@ -34,7 +34,9 @@ class ProductRepository {
       limit: 50,
       customLabels: myCustomLabels,
     };
-    return ProductSchema.paginate({ $and: [payload, { stock_control_enabled: true }]}, options)
+    
+    return ProductSchema.paginate({ $and: [{ 'brand': new RegExp(brand, 'i') }, { 'department': new RegExp(department, 'i') },
+      { stock_control_enabled: true }]}, options)
     
   }
 
