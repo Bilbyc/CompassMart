@@ -50,8 +50,8 @@ class ProductService {
     return result
   }
 
-  async getLowStock () {
-    const result = await ProductRepository.getLowStock()
+  async getLowStock (page) {
+    const result = await ProductRepository.getLowStock(page)
     return result
   }
 
