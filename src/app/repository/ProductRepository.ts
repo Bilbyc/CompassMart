@@ -38,8 +38,30 @@ class ProductRepository {
     
   }
 
-  async getLowStock () {
-    return ProductSchema.find({ qtd_stock: { $lt: 100 }, stock_control_enabled: true }).sort({ qtd_stock: 'asc' })
+  async getLowStock (page) {
+
+    const myCustomLabels = {
+      totalDocs: 'total',
+      docs: 'Products',
+      limit: 'limit',
+      totalPages: 'offsets',
+      page: 'offset',
+      nextPage: false,
+      prevPage: false,
+      pagingCounter: false,
+      hasPrevPage: false,
+      hasNextPage: false
+    };
+    
+    const options = {
+      page: page || 1,
+      limit: 50,
+      customLabels: myCustomLabels,
+      sort: { qtd_stock: 'asc' }
+    }
+
+    return ProductSchema.paginate({ $and: [{qtd_stock: { $lt: 100 }}, {stock_control_enabled: true}]}, options)
+
   }
 
   async getOne (productId: string) {
