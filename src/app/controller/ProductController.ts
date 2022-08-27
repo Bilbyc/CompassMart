@@ -5,10 +5,15 @@ class ProductController {
   async create (req, res) {
     try {
       const payload: IProduct = req.body
-      const result = await ProductService.create(payload)
+      const result: IProduct = await ProductService.create(payload)
       return res.status(201).json(result)
     } catch (error) {
-      return res.status(500).json({ error })
+      return res.status(error.statusCode||500).json({ 
+        message: error.name,
+        details: [
+          { message: error.message}
+        ]
+      })
     }
   }
 
@@ -16,7 +21,7 @@ class ProductController {
     try {
       const productId: string = req.params.id
       const payload: IProduct = req.body
-      const result = await ProductService.update(payload, productId)
+      const result: IProduct | null = await ProductService.update(payload, productId)
       return res.status(200).json(result)
     } catch (error) {
       return res.status(error.statusCode||500).json({ 
@@ -32,7 +37,7 @@ class ProductController {
     try {
       const productId: string = req.params.id
       const payload: IProduct = req.body
-      const result = await ProductService.patch(payload, productId)
+      const result: IProduct | null = await ProductService.patch(payload, productId)
       return res.status(200).json(result)
     } catch (error) {
       return res.status(error.statusCode||500).json({ 
@@ -99,7 +104,6 @@ class ProductController {
     }
   }
 
-  //////////////////////
   async createCSV (req, res) {
     try {
       const { file } = req

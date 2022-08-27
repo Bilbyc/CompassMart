@@ -41,7 +41,6 @@ class ProductRepository {
   }
 
   async getLowStock (offset: number, limit: number) {
-
     const myCustomLabels = {
       totalDocs: 'total',
       docs: 'Products',
@@ -66,7 +65,7 @@ class ProductRepository {
 
   }
 
-  async getOne (productId: string) {
+  async getOne (productId: string): Promise<IProductResponse | null> {
     return ProductSchema.findById(productId)
   }
 
