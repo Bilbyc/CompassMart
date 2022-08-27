@@ -47,9 +47,10 @@ class ProductController {
   async get (req, res) {
     try {
       const offset = parseInt(req.query.offset)
+      const limit = parseInt(req.query.limit)
       const brand: string = req.query.brand
       const department: string = req.query.department
-      const result = await ProductService.get(brand, department, offset)
+      const result = await ProductService.get(brand, department, offset, limit)
       return res.status(200).json(result)
     } catch (error) {
       return res.status(500).json({ error })
@@ -58,8 +59,9 @@ class ProductController {
 
   async getLowStock (req, res) {
     try {
+      const limit = parseInt(req.query.limit)
       const offset = parseInt(req.query.offset)
-      const result = await ProductService.getLowStock(offset)
+      const result = await ProductService.getLowStock(offset, limit)
       return res.status(200).json(result)
     } catch (error) {
       return res.status(500).json({ error })

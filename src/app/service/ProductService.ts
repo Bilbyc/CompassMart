@@ -45,13 +45,13 @@ class ProductService {
     return result
   }
 
-  async get (brand:string ,department: string, offset: number) {
-    const result = await ProductRepository.get(brand, department, offset)
+  async get (brand:string ,department: string, offset: number, limit: number) {
+    const result = await ProductRepository.get(brand, department, offset, limit)
     return result
   }
 
-  async getLowStock (offset: number) {
-    const result = await ProductRepository.getLowStock(offset)
+  async getLowStock (offset: number, limit: number) {
+    const result = await ProductRepository.getLowStock(offset, limit)
     return result
   }
 
