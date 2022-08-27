@@ -10,6 +10,10 @@ import readline from 'readline'
 
 class ProductService {
   async create (payload: IProduct): Promise<IProductResponse> {
+    const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
+    if (foundBarCode) {
+      throw new BadRequestError('Bar code already exists')
+    }
 
     const result = await ProductRepository.create(payload)
     return result
@@ -21,6 +25,10 @@ class ProductService {
     const foundProduct = await ProductRepository.getOne(productId)
     if (!foundProduct) {
       throw new NotFoundError('Product doesnt exist or was deleted')
+    }
+    const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
+    if (foundBarCode) {
+      throw new BadRequestError('Bar code already exists')
     }
 
     payload.stock_control_enabled = payload.qtd_stock > 0
@@ -37,6 +45,10 @@ class ProductService {
     if (!foundProduct) {
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
+    const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
+    if (foundBarCode) {
+      throw new BadRequestError('Bar code already exists')
+    }
     
     payload.stock_control_enabled = payload.qtd_stock > 0
     payload.updatedAt = new Date()
@@ -45,7 +57,7 @@ class ProductService {
     return result
   }
 
-  async get (brand:string ,department: string, offset: number, limit: number) {
+  async get (brand:string, department: string, offset: number, limit: number) {
     const result = await ProductRepository.get(brand, department, offset, limit)
     return result
   }
