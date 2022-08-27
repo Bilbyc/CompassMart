@@ -45,8 +45,8 @@ class ProductService {
     return result
   }
 
-  async get (payload: IProduct, offset: number) {
-    const result = await ProductRepository.get(payload, offset)
+  async get (brand:string ,department: string, offset: number) {
+    const result = await ProductRepository.get(brand, department, offset)
     return result
   }
 
