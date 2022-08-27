@@ -46,9 +46,9 @@ class ProductController {
 
   async get (req, res) {
     try {
-      const page = parseInt(req.query.page)
+      const offset = parseInt(req.query.offset)
       const payload: IProduct = req.query
-      const result = await ProductService.get(payload, page)
+      const result = await ProductService.get(payload, offset)
       return res.status(200).json(result)
     } catch (error) {
       return res.status(500).json({ error })
@@ -57,8 +57,8 @@ class ProductController {
 
   async getLowStock (req, res) {
     try {
-      const page = parseInt(req.query.page)
-      const result = await ProductService.getLowStock(page)
+      const offset = parseInt(req.query.offset)
+      const result = await ProductService.getLowStock(offset)
       return res.status(200).json(result)
     } catch (error) {
       return res.status(500).json({ error })

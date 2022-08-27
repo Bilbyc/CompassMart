@@ -14,7 +14,7 @@ class ProductRepository {
     return ProductSchema.findByIdAndUpdate(productID, payload, { new: true })
   }
 
-  async get (payload: IProduct, page) {
+  async get (payload: IProduct, offset: number) {
     
     const myCustomLabels = {
       totalDocs: 'total',
@@ -30,7 +30,7 @@ class ProductRepository {
     };
     
     const options = {
-      page: page || 1,
+      page: offset || 1,
       limit: 50,
       customLabels: myCustomLabels,
     };
@@ -38,7 +38,7 @@ class ProductRepository {
     
   }
 
-  async getLowStock (page) {
+  async getLowStock (offset: number) {
 
     const myCustomLabels = {
       totalDocs: 'total',
@@ -54,7 +54,7 @@ class ProductRepository {
     };
     
     const options = {
-      page: page || 1,
+      page: offset || 1,
       limit: 50,
       customLabels: myCustomLabels,
       sort: { qtd_stock: 'asc' }

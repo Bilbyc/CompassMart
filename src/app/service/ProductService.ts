@@ -45,13 +45,13 @@ class ProductService {
     return result
   }
 
-  async get (payload: IProduct, page) {
-    const result = await ProductRepository.get(payload, page)
+  async get (payload: IProduct, offset: number) {
+    const result = await ProductRepository.get(payload, offset)
     return result
   }
 
-  async getLowStock (page) {
-    const result = await ProductRepository.getLowStock(page)
+  async getLowStock (offset: number) {
+    const result = await ProductRepository.getLowStock(offset)
     return result
   }
 
