@@ -1,16 +1,28 @@
-<h1 align="center">Compass Mart</h1>
-<p align="center">🚀 An Api to manage Products from JSON and CSV Files made for the final Compass UOL scholarship challenge</p><br>
+<p align="center">
+  <img alt="compass logo" src="https://user-images.githubusercontent.com/65569815/176964539-fe858838-0d07-418e-9220-b6d94461ecee.png" />
+</p>
 
-Content Table
+<h1 align="center">Compass Mart</h1>
+<p align="center">🚀 An Api to create and manage Products in JSON and via CSV Files made for the final <strong>Compass.UOL</strong> scholarship challenge</p><br>
+
+📁 Content Table
 =================
 <!--ts-->
-   * [Dependencies](#dependencies)
-   * [How to use](#-how-to-use)
-   * [Endpoints](#endpoints)
-   * [Tecnologies](#tecnologies)
+   * **[Dependencies](#-dependencies)**
+   * **[How to use](#-how-to-use)**
+   * **[Endpoints](#-endpoints)**
+      * [Create a product](#create-a-product)
+      * [Create products from CSV File](#create-products-from-csv-file)
+      * [List all products](#list-all-products)
+      * [List low stock products](#list-low-stock-products)
+      * [Get product by ID](#get-product-by-id)
+      * [Update product by ID (PATCH)](#update-product-by-id-patch)
+      * [Update product by ID (PUT)](#update-product-by-id-put)
+      * [Delete product](#delete-product)
+   * **[Author](#-author)**
 <!--te-->
 
-Dependencies
+🔑 Dependencies
 ---------------
 * [cors: 2.8.5](https://www.npmjs.com/package/cors)
 * [dotenv: 16.0.1](https://www.npmjs.com/package/dotenv)
@@ -34,7 +46,7 @@ $ npm install
 ### Set up Database and Port infos (.env)
 Create a file named **.env** in the project root directory, copy and paste below content on it and insert your mongodb acess and port infos
 ```
-MONGO_DB_URL=
+MONGO_DB_URL =
 PORT =
 ```
 **Run application**
@@ -42,7 +54,7 @@ PORT =
 $ npm run dev
 ```
 
-Endpoints
+📌 Endpoints
 ============
 ### Product Endpoints
 |       Route                  |    Method    |                   Description                       |                                                                   
@@ -89,7 +101,7 @@ Endpoints
       "updatedAt": "2022-08-27T02:19:46.883Z"
     }
 
-## Create product(s) from CSV File
+## Create products from CSV File
 
 ### Request
 
@@ -280,7 +292,7 @@ Endpoints
       "updatedAt": "2022-08-27T02:19:46.883Z"
     }
   
-  ## Delete product by ID (DELETE)
+  ## Delete product
 
   ### Request
 
@@ -289,5 +301,10 @@ Endpoints
   ### Response
     
     Status Code: 204 No Content
+    
+## ✋🏻 Author
+| <img src="https://avatars.githubusercontent.com/Bilbyc" width=115> |
+|--------------------------------------------------------------------|
+| <a href="https://github.com/Bilbyc">Carlos Bilby</a> |
 
 
