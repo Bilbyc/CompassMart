@@ -25,7 +25,9 @@ class ProductRepository {
       nextPage: false,
       prevPage: false,
       pagingCounter: false,
-      };
+      hasPrevPage: false,
+      hasNextPage: false
+    };
     
     const options = {
       page: page || 1,
