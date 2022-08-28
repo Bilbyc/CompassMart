@@ -1,13 +1,28 @@
-import { Types } from 'mongoose';
+import { Types } from 'mongoose'
 
 export interface IProduct {
-  name: string;
-  age: number;
+  title: string;
+  description: string;
+  brand: string;
+  department: string;
+  price: number;
+  qtd_stock: number;
+  stock_control_enabled: boolean;
+  bar_codes: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IProductResponse {
-  name: string;
-  age: number;
   _id: Types.ObjectId;
-  __v?: number;
+  title: string;
+  description: string;
+  department: string;
+  brand: string;
+  price: number;
+  qtd_stock: number;
+  stock_control_enabled: boolean;
+  bar_codes: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
