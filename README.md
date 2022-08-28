@@ -32,6 +32,10 @@
 * [mongoose-paginate-v2: 1.7.0](https://www.npmjs.com/package/mongoose-paginate-v2)
 * [multer: 1.4.5-lts.1](https://www.npmjs.com/package/multer)
 
+:bookmark_tabs: Swagger Documentation
+---------------
+Check out another project documentation [here](https://app.swaggerhub.com/apis/carlos.bilby/CompassMart/1.0.0#/default)
+
 🎲 How to use
 ---------------
 
