@@ -14,8 +14,7 @@ class ProductRepository {
     return ProductSchema.findByIdAndUpdate(productID, payload, { new: true })
   }
 
-  async get (brand: string , department: string, offset: number, limit: number) {
-    
+  async get (brand: string, department: string, offset: number, limit: number) {
     const myCustomLabels = {
       totalDocs: 'total',
       docs: 'Products',
@@ -27,17 +26,18 @@ class ProductRepository {
       pagingCounter: false,
       hasPrevPage: false,
       hasNextPage: false
-    };
-    
+    }
+
     const options = {
       page: offset || 1,
       limit: limit || 50,
-      customLabels: myCustomLabels,
-    };
-    
-    return ProductSchema.paginate({ $and: [{ 'brand': new RegExp(brand, 'i') }, { 'department': new RegExp(department, 'i') },
-      { stock_control_enabled: true }]}, options)
-    
+      customLabels: myCustomLabels
+    }
+
+    return ProductSchema.paginate({
+      $and: [{ brand: new RegExp(brand, 'i') }, { department: new RegExp(department, 'i') },
+        { stock_control_enabled: true }]
+    }, options)
   }
 
   async getLowStock (offset: number, limit: number) {
@@ -52,8 +52,8 @@ class ProductRepository {
       pagingCounter: false,
       hasPrevPage: false,
       hasNextPage: false
-    };
-    
+    }
+
     const options = {
       page: offset || 1,
       limit: limit || 50,
@@ -61,8 +61,7 @@ class ProductRepository {
       sort: { qtd_stock: 'asc' }
     }
 
-    return ProductSchema.paginate({ $and: [{qtd_stock: { $lt: 100 }}, {stock_control_enabled: true}]}, options)
-
+    return ProductSchema.paginate({ $and: [{ qtd_stock: { $lt: 100 } }, { stock_control_enabled: true }] }, options)
   }
 
   async getOne (productId: string): Promise<IProductResponse | null> {
@@ -74,14 +73,12 @@ class ProductRepository {
   }
 
   async createCSV (products: IProduct): Promise<Array<object>> {
-    return ProductSchema.insertMany(products);
+    return ProductSchema.insertMany(products)
   }
 
   async getByBarCode (barCode: string): Promise<IProductResponse | null> {
-    return ProductSchema.findOne({bar_codes: barCode})
+    return ProductSchema.findOne({ bar_codes: barCode })
   }
-
-  
 }
 
 export default new ProductRepository()

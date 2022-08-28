@@ -8,10 +8,10 @@ class ProductController {
       const result: IProduct = await ProductService.create(payload)
       return res.status(201).json(result)
     } catch (error) {
-      return res.status(error.statusCode||500).json({ 
+      return res.status(error.statusCode || 500).json({
         message: error.name,
         details: [
-          { message: error.message}
+          { message: error.message }
         ]
       })
     }
@@ -24,12 +24,12 @@ class ProductController {
       const result: IProduct | null = await ProductService.update(payload, productId)
       return res.status(200).json(result)
     } catch (error) {
-      return res.status(error.statusCode||500).json({ 
+      return res.status(error.statusCode || 500).json({
         message: error.name,
         details: [
-          { message: error.message}
+          { message: error.message }
         ]
-       })
+      })
     }
   }
 
@@ -40,12 +40,12 @@ class ProductController {
       const result: IProduct | null = await ProductService.patch(payload, productId)
       return res.status(200).json(result)
     } catch (error) {
-      return res.status(error.statusCode||500).json({ 
+      return res.status(error.statusCode || 500).json({
         message: error.name,
         details: [
-          { message: error.message}
+          { message: error.message }
         ]
-       })
+      })
     }
   }
 
@@ -79,12 +79,12 @@ class ProductController {
       const result = await ProductService.getOne(productId)
       return res.status(200).json(result)
     } catch (error) {
-      return res.status(error.statusCode||500).json({ 
+      return res.status(error.statusCode || 500).json({
         message: error.name,
         details: [
-          { message: error.message}
+          { message: error.message }
         ]
-       })
+      })
     }
   }
 
@@ -95,28 +95,26 @@ class ProductController {
 
       return res.status(204).json()
     } catch (error) {
-      return res.status(error.statusCode||500).json({ 
+      return res.status(error.statusCode || 500).json({
         message: error.name,
         details: [
-          { message: error.message}
+          { message: error.message }
         ]
-       })
+      })
     }
   }
 
   async createCSV (req, res) {
     try {
       const { file } = req
-      
+
       const result = await ProductService.createCSV(file)
-  
+
       return res.status(201).json(result)
     } catch (error) {
       return res.status(500).json({ error })
-    } 
+    }
   }
 }
 
 export default new ProductController()
-
-

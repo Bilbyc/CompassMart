@@ -3,11 +3,11 @@ import ProductController from '../app/controller/ProductController'
 import createValidation from '../app/validations/product/create'
 import putValidation from '../app/validations/product/put'
 import patchValidation from '../app/validations/product/patch'
-import multer from 'multer';
+import multer from 'multer'
 
 const router = Router()
 
-const multerConfig = multer ()
+const multerConfig = multer()
 
 router.post('/api/v1/product', createValidation, ProductController.create)
 router.post('/api/v1/product/csv', multerConfig.single('file'), ProductController.createCSV)

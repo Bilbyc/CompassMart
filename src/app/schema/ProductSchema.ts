@@ -5,7 +5,7 @@ import mongoosePaginate from 'mongoose-paginate-v2'
 const schema = new Schema<IProduct>({
   title: { type: String, required: true },
   description: { type: String, required: true },
-  department: { type: String, required: true},
+  department: { type: String, required: true },
   brand: { type: String, required: true },
   price: { type: Number, required: true },
   qtd_stock: { type: Number, required: true },
