@@ -104,7 +104,6 @@ class ProductService {
 
     for await (const line of productsLine) {
       const productLineSplit = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
-      console.log(productLineSplit)
 
       products.push({
         title: productLineSplit[0].replace(/["\\]+/g, ''),
@@ -125,6 +124,9 @@ class ProductService {
     for (let i = 0; i < products.length; i++) {
       let productErrors = 0
 
+      const errorMsg: string[] = []
+      const errorProduct: object = { title: products[i].title, bar_codes: products[i].bar_codes, error: errorMsg }
+
       async function checkNullOrUndefined (value: object) {
         if (!value || value === undefined) {
           productErrors++
@@ -134,71 +136,74 @@ class ProductService {
       }
 
       if (await checkNullOrUndefined(products[i].title)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Title is null or undefined' })
+        errorMsg.push('Title is null or undefined')
       }
 
       if (await checkNullOrUndefined(products[i].description)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Description is null or undefined' })
+        errorMsg.push('Description is null or undefined')
       }
 
       if (await checkNullOrUndefined(products[i].department)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Department is null or undefined' })
+        errorMsg.push('Department is null or undefined')
       }
 
       if (await checkNullOrUndefined(products[i].brand)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Brand is null or undefined' })
+        errorMsg.push('Brand is null or undefined')
       }
 
       if (await checkNullOrUndefined(products[i].price)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Price is null or undefined' })
+        errorMsg.push('Price is null or undefined')
       }
 
       if (await checkNullOrUndefined(products[i].qtd_stock)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Qtd Stock is null or undefined' })
+        errorMsg.push('Qtd Stock is null or undefined')
       }
 
       if (await checkNullOrUndefined(products[i].bar_codes)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Bar Codes is null or undefined' })
+        errorMsg.push('Bar Codes is null or undefined')
       }
 
       if (products[i].qtd_stock < 1 || products[i].qtd_stock > 100000) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Stock quantity must be minimum 1 and at max 100000' })
+        errorMsg.push('Stock quantity must be minimum 1 and at max 100000')
         errorCounter++
         productErrors++
       }
 
       if (products[i].bar_codes.length !== 13) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'bar codes length must be 13' })
+        errorMsg.push('bar codes length must be 13')
         errorCounter++
         productErrors++
       }
 
       if (products[i].bar_codes.length === 13 && !products[i].bar_codes.match(/^[0-9]{13}$/)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'bar codes must be numbers' })
+        errorMsg.push('bar codes must be numbers')
         errorCounter++
         productErrors++
       }
 
       if (products[i].qtd_stock < 0 || products[i].qtd_stock > 100000) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'stock must be between 0 and 100.000' })
+        errorMsg.push('stock must be between 0 and 100.000')
         errorCounter++
         productErrors++
       }
 
       if (products[i].price < 0.01 || products[i].price > 1000) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'price must be between 0.01 and 1000' })
+        errorMsg.push('price must be between 0.01 and 1000')
         errorCounter++
         productErrors++
       }
 
       const foundBarCode = await ProductRepository.getByBarCode(products[i].bar_codes)
       if (foundBarCode) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'bar code already exists' })
+        errorMsg.push('bar code already exists')
         errorCounter++
         productErrors++
-      } else if (productErrors === 0) {
+      }
+      if (productErrors === 0) {
         ProductRepository.create(products[i])
         successCounter++
+      } else if (productErrors > 0) {
+        error.push(errorProduct)
       }
     }
 
