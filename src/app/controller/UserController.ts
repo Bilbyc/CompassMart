@@ -1,3 +1,4 @@
+import { createTokenJWT } from '../utils/tokenCreation'
 import { IUser, IUserResponse } from '../interfaces/IUser'
 import UserService from '../service/UserService'
 
@@ -5,6 +6,8 @@ class UserController {
   async create (req, res): Promise<IUserResponse> {
     try {
       const payload: IUser = req.body
+      const token = createTokenJWT(payload)
+      res.setHeader('Authorization', token)
       const result = await UserService.create(payload)
 
       return res.status(201).json(result)
