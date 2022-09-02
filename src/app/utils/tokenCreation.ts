@@ -1,11 +1,11 @@
-import { IUser } from './../interfaces/iUser'
+import { IUserResponse } from './../interfaces/iUser'
 import jwt from 'jsonwebtoken'
 
-export function createTokenJWT (user: IUser) {
+export function createTokenJWT (user: IUserResponse) {
   const payload = {
-    email: user.email
+    id: user._id
   }
 
-  const token = jwt.sign(payload, 'senha-secreta', { expiresIn: '1h' })
+  const token = jwt.sign(payload, process.env.CHAVE_JWT, { expiresIn: '1h' })
   return token
 }
