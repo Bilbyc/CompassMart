@@ -125,6 +125,7 @@ class ProductService {
       let productErrors = 0
 
       const errorMsg: string[] = []
+      let singleErrorMsg: string
       const errorProduct: object = { title: products[i].title, bar_codes: products[i].bar_codes, error: errorMsg }
 
       async function checkNullOrUndefined (value: object) {
@@ -202,7 +203,12 @@ class ProductService {
       if (productErrors === 0) {
         ProductRepository.create(products[i])
         successCounter++
-      } else if (productErrors > 0) {
+      }
+      if (productErrors === 1) {
+        singleErrorMsg = errorMsg[0]
+        error.push({ title: products[i].title, bar_codes: products[i].bar_codes, error: singleErrorMsg })
+      }
+      if (productErrors > 1) {
         error.push(errorProduct)
       }
     }
