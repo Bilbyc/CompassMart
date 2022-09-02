@@ -4,11 +4,12 @@ import createValidation from '../app/validations/product/create'
 import putValidation from '../app/validations/product/put'
 import patchValidation from '../app/validations/product/patch'
 import multer from 'multer'
+import { auth } from '../app/middlewares/auth'
 
 const router = Router()
 
 const multerConfig = multer()
-
+router.use(auth)
 router.post('/api/v1/product', createValidation, ProductController.create)
 router.post('/api/v1/product/csv', multerConfig.single('file'), ProductController.createCSV)
 router.get('/api/v1/product/low_stock', ProductController.getLowStock)
