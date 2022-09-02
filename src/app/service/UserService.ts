@@ -4,6 +4,7 @@ import { IUser } from '../interfaces/IUser'
 import bcrypt from 'bcrypt'
 import { createTokenJWT } from '../utils/tokenCreation'
 import NotFoundError from '../errors/NotFoundError'
+import BadRequestError from '../errors/BadRequestError'
 
 class UserService {
   async create (payload: IUser): Promise<IUserResponse> {
@@ -19,7 +20,7 @@ class UserService {
     }
     const passwordMatch = await bcrypt.compare(password, user.password)
     if (!passwordMatch) {
-      throw new Error('Password does not match')
+      throw new BadRequestError('Password does not match')
     }
     const token = createTokenJWT(user)
     return { email, token }
