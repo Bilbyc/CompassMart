@@ -1,5 +1,6 @@
 import { IProduct, IProductResponse } from '../interfaces/IProduct'
 import ProductSchema from '../schema/ProductSchema'
+import { myCustomLabels } from '../utils/pagination'
 
 class ProductRepository {
   async create (payload: IProduct): Promise<IProductResponse> {
@@ -15,19 +16,6 @@ class ProductRepository {
   }
 
   async get (brand: string, department: string, offset: number, limit: number) {
-    const myCustomLabels = {
-      totalDocs: 'total',
-      docs: 'Products',
-      limit: 'limit',
-      totalPages: 'offsets',
-      page: 'offset',
-      nextPage: false,
-      prevPage: false,
-      pagingCounter: false,
-      hasPrevPage: false,
-      hasNextPage: false
-    }
-
     const options = {
       page: offset || 1,
       limit: limit || 50,
@@ -41,19 +29,6 @@ class ProductRepository {
   }
 
   async getLowStock (offset: number, limit: number) {
-    const myCustomLabels = {
-      totalDocs: 'total',
-      docs: 'Products',
-      limit: 'limit',
-      totalPages: 'offsets',
-      page: 'offset',
-      nextPage: false,
-      prevPage: false,
-      pagingCounter: false,
-      hasPrevPage: false,
-      hasNextPage: false
-    }
-
     const options = {
       page: offset || 1,
       limit: limit || 50,
