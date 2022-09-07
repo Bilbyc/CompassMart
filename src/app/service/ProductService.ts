@@ -102,31 +102,31 @@ class ProductService {
         dataTypes.push(Object.values(value)[3] as string)
       }
     }
-    console.log(dataTypes)
+
     for (let i = 0; i < productKeys.length; i++) {
       fieldProduct.push(productKeys[i].split('.')[1])
       fieldMarket.push(productKeysValues[i].split('.'))
     }
 
-    const lastProductKey: any = []
+    const lastFMarketKey: any = []
     for (let i = 0; i < fieldMarket.length; i++) {
-      lastProductKey.push(productKeysValues[i].split('.')[fieldMarket[i].length - 1])
+      lastFMarketKey.push(productKeysValues[i].split('.')[fieldMarket[i].length - 1])
     }
 
     const finalProduct: any = {}
     for (let i = 0; i < productKeys.length; i++) {
       switch (dataTypes[i]) {
         case 'text':
-          finalProduct[lastProductKey[i]] = (foundProduct[fieldProduct[i]]).toString()
+          finalProduct[lastFMarketKey[i]] = (foundProduct[fieldProduct[i]]).toString()
           break
         case 'number':
-          finalProduct[lastProductKey[i]] = parseFloat(foundProduct[fieldProduct[i]])
+          finalProduct[lastFMarketKey[i]] = parseFloat(foundProduct[fieldProduct[i]])
           break
         case 'array':
-          finalProduct[lastProductKey[i]] = [foundProduct[fieldProduct[i]]]
+          finalProduct[lastFMarketKey[i]] = [foundProduct[fieldProduct[i]]]
           break
         case 'boolean':
-          finalProduct[lastProductKey[i]] = foundProduct[fieldProduct[i]]
+          finalProduct[lastFMarketKey[i]] = foundProduct[fieldProduct[i]]
           break
       }
     }
