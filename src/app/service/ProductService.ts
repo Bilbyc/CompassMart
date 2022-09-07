@@ -5,6 +5,7 @@ import { IProductResponse, IProduct } from '../interfaces/IProduct'
 import ProductRepository from '../repository/ProductRepository'
 import NotFoundError from '../errors/NotFoundError'
 import readline from 'readline'
+import mapper from '../../mapper/mapper.json'
 
 class ProductService {
   async create (payload: IProduct): Promise<IProductResponse> {
@@ -75,6 +76,71 @@ class ProductService {
 
     const result = await ProductRepository.getOne(productId)
     return result
+  }
+
+  async getMapper (productId: string) {
+    if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID')
+
+    const foundProduct: IProductResponse | null = await ProductRepository.getOne(productId)
+    if (!foundProduct) {
+      throw new NotFoundError('Product doesnt exist')
+    }
+    const mapperFields: any = mapper.fields
+
+    const productKeys: Array<string> = []
+    const productKeysValues: Array<string> = []
+    const fieldProduct: Array<string> = []
+    const fieldMarket: Array<Array<string>> = []
+    const dataTypes: Array<string> = []
+
+    for (const value of mapperFields) {
+      productKeys.push(Object.values(value)[0] as string)
+      productKeysValues.push(Object.values(value)[1] as string)
+      if (Object.keys(value)[2] === 'type') {
+        dataTypes.push(Object.values(value)[2] as string)
+      } else {
+        dataTypes.push(Object.values(value)[3] as string)
+      }
+    }
+    console.log(dataTypes)
+    for (let i = 0; i < productKeys.length; i++) {
+      fieldProduct.push(productKeys[i].split('.')[1])
+      fieldMarket.push(productKeysValues[i].split('.'))
+    }
+
+    const lastProductKey: any = []
+    for (let i = 0; i < fieldMarket.length; i++) {
+      lastProductKey.push(productKeysValues[i].split('.')[fieldMarket[i].length - 1])
+    }
+
+    const finalProduct: any = {}
+    for (let i = 0; i < productKeys.length; i++) {
+      if (dataTypes[i] === 'number') {
+        finalProduct[lastProductKey[i]] = parseFloat(foundProduct[fieldProduct[i]])
+      }
+      if (dataTypes[i] === 'text') {
+        finalProduct[lastProductKey[i]] = (foundProduct[fieldProduct[i]]).toString()
+      }
+      if (dataTypes[i] === 'array') {
+        finalProduct[lastProductKey[i]] = [foundProduct[fieldProduct[i]]]
+      }
+      if (dataTypes[i] === 'boolean') {
+        finalProduct[lastProductKey[i]] = foundProduct[fieldProduct[i]]
+      }
+    }
+
+    function buildMapperProduct (fieldMarket: Array<Array<string>>) {
+      const marketplace = {}
+      for (const prop of fieldMarket) {
+        let obj = marketplace
+        for (const p of prop) {
+          obj = obj[p] = finalProduct[p] = obj[p] = finalProduct[p] || {}
+        }
+      }
+      return marketplace
+    }
+
+    return buildMapperProduct(fieldMarket)
   }
 
   async delete (productId: string) {
