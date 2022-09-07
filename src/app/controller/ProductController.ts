@@ -88,6 +88,21 @@ class ProductController {
     }
   }
 
+  async getMapper (req, res) {
+    try {
+      const productId: string = req.params.id
+      const result = await ProductService.getMapper(productId)
+      return res.status(200).json(result)
+    } catch (error) {
+      return res.status(error.statusCode || 500).json({
+        message: error.name,
+        details: [
+          { message: error.message }
+        ]
+      })
+    }
+  }
+
   async delete (req, res) {
     try {
       const productId: string = req.params.id
