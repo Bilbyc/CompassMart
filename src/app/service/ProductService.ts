@@ -83,7 +83,7 @@ class ProductService {
 
     const foundProduct: IProductResponse | null = await ProductRepository.getOne(productId)
     if (!foundProduct) {
-      throw new NotFoundError('Product doesnt exist')
+      throw new NotFoundError('Product doesnt exist or was deleted')
     }
     const mapperFields: any = mapper.fields
 
