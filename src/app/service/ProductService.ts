@@ -115,17 +115,19 @@ class ProductService {
 
     const finalProduct: any = {}
     for (let i = 0; i < productKeys.length; i++) {
-      if (dataTypes[i] === 'number') {
-        finalProduct[lastProductKey[i]] = parseFloat(foundProduct[fieldProduct[i]])
-      }
-      if (dataTypes[i] === 'text') {
-        finalProduct[lastProductKey[i]] = (foundProduct[fieldProduct[i]]).toString()
-      }
-      if (dataTypes[i] === 'array') {
-        finalProduct[lastProductKey[i]] = [foundProduct[fieldProduct[i]]]
-      }
-      if (dataTypes[i] === 'boolean') {
-        finalProduct[lastProductKey[i]] = foundProduct[fieldProduct[i]]
+      switch (dataTypes[i]) {
+        case 'text':
+          finalProduct[lastProductKey[i]] = (foundProduct[fieldProduct[i]]).toString()
+          break
+        case 'number':
+          finalProduct[lastProductKey[i]] = parseFloat(foundProduct[fieldProduct[i]])
+          break
+        case 'array':
+          finalProduct[lastProductKey[i]] = [foundProduct[fieldProduct[i]]]
+          break
+        case 'boolean':
+          finalProduct[lastProductKey[i]] = foundProduct[fieldProduct[i]]
+          break
       }
     }
 
