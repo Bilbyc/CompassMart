@@ -108,12 +108,12 @@ class ProductService {
       fieldMarket.push(productKeysValues[i].split('.'))
     }
 
-    const lastFMarketKey: any = []
+    const lastFMarketKey: Array<string> = []
     for (let i = 0; i < fieldMarket.length; i++) {
       lastFMarketKey.push(productKeysValues[i].split('.')[fieldMarket[i].length - 1])
     }
 
-    const finalProduct: any = {}
+    const finalProduct: Object = {}
     for (let i = 0; i < productKeys.length; i++) {
       switch (dataTypes[i]) {
         case 'text':
