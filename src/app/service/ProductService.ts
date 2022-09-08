@@ -12,7 +12,7 @@ class ProductService {
   async create (payload: IProduct): Promise<IProductResponse> {
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
     if (foundBarCode) {
-      Logger.error(`[POST /api/v1/product]: Bar code already exists: ${payload.bar_codes}`)
+      Logger.error(`[POST /api/v1/product]: Bar code already exists: '${payload.bar_codes}'`)
       throw new BadRequestError('Bar code already exists')
     }
 
@@ -32,7 +32,7 @@ class ProductService {
     }
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
     if (foundBarCode) {
-      Logger.error(`[PUT /api/v1/product/:id]: Bar code already exists: ${payload.bar_codes}`)
+      Logger.error(`[PUT /api/v1/product/:id]: Bar code already exists: '${payload.bar_codes}'`)
       throw new BadRequestError('Bar code already exists')
     }
 
@@ -55,7 +55,7 @@ class ProductService {
     }
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
     if (foundBarCode) {
-      Logger.error(`[PATCH /api/v1/product/:id]: Bar code already exists: ${payload.bar_codes}`)
+      Logger.error(`[PATCH /api/v1/product/:id]: Bar code already exists: '${payload.bar_codes}'`)
       throw new BadRequestError('Bar code already exists')
     }
 
@@ -140,7 +140,7 @@ class ProductService {
         case 'number':
           finalProduct[lastFMarketKey[i]] = parseFloat(foundProduct[fieldProduct[i]])
           if (isNaN(finalProduct[lastFMarketKey[i]])) {
-            Logger.error(`[GET /api/v1/product/marketplace/:id] (ID:${productId}) field ${[lastFMarketKey[i]]}/${fieldProduct[i]} cant be converted to number`)
+            Logger.error(`[GET /api/v1/product/marketplace/:id] (ID:'${productId}') field '${[lastFMarketKey[i]]}'/'${fieldProduct[i]}' cant be converted to number`)
             throw new BadRequestError(`The field ${lastFMarketKey[i]} cant be a number`)
           }
           break
@@ -150,7 +150,7 @@ class ProductService {
         case 'boolean':
           finalProduct[lastFMarketKey[i]] = foundProduct[fieldProduct[i]]
           if (typeof finalProduct[lastFMarketKey[i]] !== 'boolean') {
-            Logger.error(`[GET /api/v1/product/marketplace/:id] (ID:${productId}) field ${[lastFMarketKey[i]]}/${fieldProduct[i]} cant be converted to boolean`)
+            Logger.error(`[GET /api/v1/product/marketplace/:id] (ID:'${productId}') field '${[lastFMarketKey[i]]}'/'${fieldProduct[i]}' cant be converted to boolean`)
             throw new BadRequestError(`The field ${lastFMarketKey[i]} cant be a boolean`)
           }
           break
@@ -303,11 +303,11 @@ class ProductService {
       }
       if (productErrors === 1) {
         singleErrorMsg = errorMsg[0]
-        Logger.error(`[POST /api/v1/product/csv] Product '${products[i].title}' with bar code '${products[i].bar_codes}' has an error: ${singleErrorMsg}`)
+        Logger.error(`[POST /api/v1/product/csv] Product '${products[i].title}' with bar code '${products[i].bar_codes}' has an error: '${singleErrorMsg}'`)
         error.push({ title: products[i].title, bar_codes: products[i].bar_codes, error: singleErrorMsg })
       }
       if (productErrors > 1) {
-        Logger.error(`[POST /api/v1/product/csv] Product '${products[i].title}' with bar code '${products[i].bar_codes}' has multiple errors: ${errorMsg}`)
+        Logger.error(`[POST /api/v1/product/csv] Product '${products[i].title}' with bar code '${products[i].bar_codes}' has multiple errors: '${errorMsg}'`)
         error.push(errorProduct)
       }
     }

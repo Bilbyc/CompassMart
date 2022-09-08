@@ -18,7 +18,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     if (error) throw error
     return next()
   } catch (error) {
-    Logger.error(`[POST /api/v1/product]: Product (ID:${req.params.id}) ${error}`)
+    Logger.error(`[POST /api/v1/product]: ${error}`)
     return res.status(400).json({
       message: 'Bad Request Error',
       errors: error.details.length,
