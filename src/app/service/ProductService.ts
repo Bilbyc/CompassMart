@@ -77,10 +77,14 @@ class ProductService {
   }
 
   async getOne (productId: string) {
-    if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID')
+    if (!Types.ObjectId.isValid(productId)) {
+      Logger.error(`[GET /api/v1/product/:id]: ID:'${productId}' is not in a valid ID format`)
+      throw new BadRequestError('Not an valid ID')
+    }
 
     const foundProduct = await ProductRepository.getOne(productId)
     if (!foundProduct) {
+      Logger.error(`[GET /api/v1/product/:id]: ID:'${productId}' doesnt exist or was deleted`)
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
 
@@ -89,10 +93,14 @@ class ProductService {
   }
 
   async getMapper (productId: string) {
-    if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID')
+    if (!Types.ObjectId.isValid(productId)) {
+      Logger.error(`[GET /api/v1/product/marketplace/:id]: ID:'${productId}' is not in a valid ID format`)
+      throw new BadRequestError('Not an valid ID')
+    }
 
     const foundProduct: IProductResponse | null = await ProductRepository.getOne(productId)
     if (!foundProduct) {
+      Logger.error(`[GET /api/v1/product/marketplace/:id]: ID:'${productId}' doesnt exist or was deleted`)
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
     const mapperFields: any = mapper.fields
@@ -132,6 +140,7 @@ class ProductService {
         case 'number':
           finalProduct[lastFMarketKey[i]] = parseFloat(foundProduct[fieldProduct[i]])
           if (isNaN(finalProduct[lastFMarketKey[i]])) {
+            Logger.error(`[GET /api/v1/product/marketplace/:id] (ID:${productId}) field ${[lastFMarketKey[i]]}/${fieldProduct[i]} cant be converted to number`)
             throw new BadRequestError(`The field ${lastFMarketKey[i]} cant be a number`)
           }
           break
@@ -141,6 +150,7 @@ class ProductService {
         case 'boolean':
           finalProduct[lastFMarketKey[i]] = foundProduct[fieldProduct[i]]
           if (typeof finalProduct[lastFMarketKey[i]] !== 'boolean') {
+            Logger.error(`[GET /api/v1/product/marketplace/:id] (ID:${productId}) field ${[lastFMarketKey[i]]}/${fieldProduct[i]} cant be converted to boolean`)
             throw new BadRequestError(`The field ${lastFMarketKey[i]} cant be a boolean`)
           }
           break
