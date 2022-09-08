@@ -1,3 +1,4 @@
+import Logger from '../utils/loggers/winstonConfig'
 import { Readable } from 'stream'
 import BadRequestError from '../errors/BadRequestError'
 import { Types } from 'mongoose'
@@ -11,6 +12,7 @@ class ProductService {
   async create (payload: IProduct): Promise<IProductResponse> {
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
     if (foundBarCode) {
+      Logger.error(`[POST /api/v1/products]: Bar code already exists: ${payload.bar_codes}`)
       throw new BadRequestError('Bar code already exists')
     }
 
@@ -280,9 +282,11 @@ class ProductService {
       }
       if (productErrors === 1) {
         singleErrorMsg = errorMsg[0]
+        Logger.error(`[POST /api/v1/product/csv] Product '${products[i].title}' with bar code '${products[i].bar_codes}' has an error: ${singleErrorMsg}`)
         error.push({ title: products[i].title, bar_codes: products[i].bar_codes, error: singleErrorMsg })
       }
       if (productErrors > 1) {
+        Logger.error(`[POST /api/v1/product/csv] Product '${products[i].title}' with bar code '${products[i].bar_codes}' has multiple errors: ${errorMsg}`)
         error.push(errorProduct)
       }
     }
