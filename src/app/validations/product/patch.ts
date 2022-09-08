@@ -1,5 +1,6 @@
 import Joi from 'joi'
 import { Request, Response, NextFunction } from 'express'
+import Logger from '../../utils/loggers/winstonConfig'
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -17,6 +18,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     if (error) throw error
     return next()
   } catch (error) {
+    Logger.error(`[PATCH /api/v1/product/:id]: Product (ID:${req.params.id}) ${error}`)
     return res.status(400).json({
       message: 'Bad Request Error',
       errors: error.details.length,
