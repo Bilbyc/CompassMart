@@ -12,7 +12,7 @@ class ProductService {
   async create (payload: IProduct): Promise<IProductResponse> {
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
     if (foundBarCode) {
-      Logger.error(`[POST /api/v1/products]: Bar code already exists: ${payload.bar_codes}`)
+      Logger.error(`[POST /api/v1/product]: Bar code already exists: ${payload.bar_codes}`)
       throw new BadRequestError('Bar code already exists')
     }
 
@@ -21,14 +21,18 @@ class ProductService {
   }
 
   async update (payload: IProduct, productId: string): Promise<IProductResponse | null> {
-    if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID')
-
+    if (!Types.ObjectId.isValid(productId)) {
+      Logger.error(`[PUT /api/v1/product/:id]: ID:'${productId}' is not in a valid ID format`)
+      throw new BadRequestError('Not an valid ID')
+    }
     const foundProduct = await ProductRepository.getOne(productId)
     if (!foundProduct) {
+      Logger.error(`[PUT /api/v1/product/:id]: ID:'${productId}' doesnt exist or was deleted`)
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
     if (foundBarCode) {
+      Logger.error(`[PUT /api/v1/product/:id]: Bar code already exists: ${payload.bar_codes}`)
       throw new BadRequestError('Bar code already exists')
     }
 
@@ -40,14 +44,18 @@ class ProductService {
   }
 
   async patch (payload: IProduct, productId: string): Promise<IProductResponse | null> {
-    if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID')
-
+    if (!Types.ObjectId.isValid(productId)) {
+      Logger.error(`[PATCH /api/v1/product/:id]: ID:'${productId}' is not in a valid ID format`)
+      throw new BadRequestError('Not an valid ID')
+    }
     const foundProduct = await ProductRepository.getOne(productId)
     if (!foundProduct) {
+      Logger.error(`[PATCH /api/v1/product/:id]: ID:'${productId}' doesnt exist or was deleted`)
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
     if (foundBarCode) {
+      Logger.error(`[PATCH /api/v1/product/:id]: Bar code already exists: ${payload.bar_codes}`)
       throw new BadRequestError('Bar code already exists')
     }
 
