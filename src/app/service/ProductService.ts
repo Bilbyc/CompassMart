@@ -172,11 +172,14 @@ class ProductService {
   }
 
   async delete (productId: string) {
-    if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID')
-
+    if (!Types.ObjectId.isValid(productId)) {
+      Logger.error(`[DELETE /api/v1/product/:id]: ID:'${productId}' is not in a valid ID format`)
+      throw new BadRequestError('Not an valid ID')
+    }
     const foundProduct = await ProductRepository.getOne(productId)
     if (!foundProduct) {
-      throw new NotFoundError('Product doesnt exist')
+      Logger.error(`[DELETE /api/v1/product/:id]: ID:'${productId}' doesnt exist or was already deleted`)
+      throw new NotFoundError('Product doesnt exist or was already deleted')
     }
 
     const result = await ProductRepository.delete(productId)
