@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import routes from './routes/index.router'
+import morgan from './app/utils/loggers/morganConfig'
 import './infra/database/mongo/index'
 
 dotenv.config({
@@ -29,6 +30,7 @@ class App {
       })
     )
     this.server.use(cors())
+    this.server.use(morgan)
   }
 
   private routes (): void {

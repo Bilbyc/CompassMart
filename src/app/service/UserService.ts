@@ -1,3 +1,4 @@
+import Logger from '../utils/loggers/winstonConfig'
 import { IUserResponse } from './../interfaces/iUser'
 import UserRepository from '../repository/UserRepository'
 import { IUser } from '../interfaces/IUser'
@@ -16,10 +17,12 @@ class UserService {
   async authenticate (email: string, password: string): Promise<any> {
     const user = await UserRepository.findByEmail(email)
     if (!user) {
-      throw new NotFoundError('User not found')
+      Logger.error(`[POST /api/v1/authenticate]: Email not found: ${email}`)
+      throw new NotFoundError('Email not found')
     }
     const passwordMatch = await bcrypt.compare(password, user.password)
     if (!passwordMatch) {
+      Logger.error(`[POST /api/v1/authenticate]: Password does not match: ${email}`)
       throw new BadRequestError('Password does not match')
     }
     const token = createTokenJWT(user)
