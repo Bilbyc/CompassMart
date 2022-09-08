@@ -121,12 +121,18 @@ class ProductService {
           break
         case 'number':
           finalProduct[lastFMarketKey[i]] = parseFloat(foundProduct[fieldProduct[i]])
+          if (isNaN(finalProduct[lastFMarketKey[i]])) {
+            throw new BadRequestError(`The field ${lastFMarketKey[i]} cant be a number`)
+          }
           break
         case 'array':
           finalProduct[lastFMarketKey[i]] = [foundProduct[fieldProduct[i]]]
           break
         case 'boolean':
           finalProduct[lastFMarketKey[i]] = foundProduct[fieldProduct[i]]
+          if (typeof finalProduct[lastFMarketKey[i]] !== 'boolean') {
+            throw new BadRequestError(`The field ${lastFMarketKey[i]} cant be a boolean`)
+          }
           break
       }
     }
