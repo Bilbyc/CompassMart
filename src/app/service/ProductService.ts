@@ -31,7 +31,7 @@ class ProductService {
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
-    if (foundBarCode) {
+    if (foundBarCode && foundBarCode._id.toString() !== productId) {
       Logger.error(`[PUT /api/v1/product/:id]: Bar code already exists: '${payload.bar_codes}'`)
       throw new BadRequestError('Bar code already exists')
     }
@@ -54,7 +54,7 @@ class ProductService {
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
-    if (foundBarCode) {
+    if (foundBarCode && foundBarCode._id.toString() !== productId) {
       Logger.error(`[PATCH /api/v1/product/:id]: Bar code already exists: '${payload.bar_codes}'`)
       throw new BadRequestError('Bar code already exists')
     }
