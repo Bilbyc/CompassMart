@@ -21,3 +21,17 @@ const testProduct = {
 }
 
 let productId
+
+beforeAll(async () => {
+  const login = await server.post('/api/v1/user').send({
+    email: 'carlos.test@gmail.com',
+    password: testPassword
+  })
+
+  const authenticate = await server.post('/api/v1/authenticate').send({
+    email: login.body.email,
+    password: testPassword
+  })
+
+  token = authenticate.body.token
+})
