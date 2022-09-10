@@ -20,6 +20,16 @@ const testProduct = {
   bar_codes: '1234567891011'
 }
 
+const testProductTwo = {
+  title: 'Refrigerante',
+  description: 'Pepsi Cola 600ml',
+  department: 'Depósitos',
+  brand: 'Pepsi',
+  price: 5.50,
+  qtd_stock: 900,
+  bar_codes: '1234567891000'
+}
+
 let productId
 
 beforeAll(async () => {
@@ -38,7 +48,7 @@ beforeAll(async () => {
 
 describe('Products Service', () => {
   describe('POST /product', () => {
-    it('should create a product', async () => {
+    it('should return 201 - and create a product', async () => {
       const response = await server.post('/api/v1/product')
         .set('Authorization', `Bearer ${token}`).send(testProduct)
 
@@ -131,6 +141,118 @@ describe('Products Service', () => {
       const res = await server.get('/api/v1/product/low_stock?limit=1&offset=1')
         .set('Authorization', `Bearer ${token}`)
       expect(res.status).toEqual(200)
+    })
+  })
+
+  describe('PUT /product/:id', () => {
+    it('should return 200 OK', async () => {
+      const res = await server.put(`/api/v1/product/${productId}`)
+        .set('Authorization', `Bearer ${token}`).send({
+          title: 'Refrigerante Cola',
+          description: 'Coca Cola 900ml',
+          department: 'Depósitos',
+          brand: 'Coca cola',
+          price: 5.50,
+          qtd_stock: 700,
+          bar_codes: '1234567891011'
+        })
+
+      expect(res.status).toEqual(200)
+    })
+
+    it('Should return 400 Bad Request - bar codes already exists', async () => {
+      const product = await server.post('/api/v1/product')
+        .set('Authorization', `Bearer ${token}`).send(testProductTwo)
+
+      const res = await server.put(`/api/v1/product/${product.body._id}`)
+        .set('Authorization', `Bearer ${token}`).send({
+          title: 'Refrigerante Cola',
+          description: 'Coca Cola 900ml',
+          department: 'Depósitos',
+          brand: 'Coca cola',
+          price: 5.50,
+          qtd_stock: 700,
+          bar_codes: '1234567891011'
+        })
+
+      expect(res.status).toEqual(400)
+      expect(res.body).toHaveProperty('details')
+    })
+
+    it('should return 401 Unauthorized - not passing bearer token', async () => {
+      const res = await server.put(`/api/v1/product/${productId}`)
+        .send({
+          title: 'Refrigerante',
+          description: 'Coca Cola 600ml',
+          department: 'Depósitos',
+          brand: 'Coca cola',
+          price: 5.50,
+          qtd_stock: 866,
+          bar_codes: '1234567891011'
+        })
+
+      expect(res.status).toEqual(401)
+    })
+
+    it('should return 400 Bad Request - passing an invalid ID', async () => {
+      const res = await server.put('/api/v1/product/123')
+        .set('Authorization', `Bearer ${token}`).send({
+          title: 'Refrigerante',
+          description: 'Coca Cola 600ml',
+          department: 'Depósitos',
+          brand: 'Coca cola',
+          price: 5.50,
+          qtd_stock: 866,
+          bar_codes: '1234567891011'
+        })
+
+      expect(res.status).toEqual(400)
+    })
+
+    it('should return 404 Not Found - passing a valid but inexistent ID', async () => {
+      const res = await server.put('/api/v1/product/5e9f1b9b9b9b9b9b9b9b9b9b')
+        .set('Authorization', `Bearer ${token}`).send({
+          title: 'Refrigerante',
+          description: 'Coca Cola 600ml',
+          department: 'Depósitos',
+          brand: 'Coca cola',
+          price: 5.50,
+          qtd_stock: 866,
+          bar_codes: '1234567891011'
+        })
+
+      expect(res.status).toEqual(404)
+    })
+
+    it('should return 400 Bad Request - missing a required property', async () => {
+      const res = await server.put(`/api/v1/product/${productId}`)
+        .set('Authorization', `Bearer ${token}`).send({
+          title: 'Refrigerante',
+          description: 'Coca Cola 600ml',
+          brand: 'Coca cola',
+          price: 5.50,
+          qtd_stock: 866,
+          bar_codes: '1234567891011'
+        })
+
+      expect(res.status).toEqual(400)
+      expect(res.body).toHaveProperty('error')
+    })
+
+    it('should return 400 Bad Request - field not allowed to be empty', async () => {
+      const res = await server.put(`/api/v1/product/${productId}`)
+        .set('Authorization', `Bearer ${token}`).send({
+          title: '',
+          description: 'Coca Cola 600ml',
+          department: 'Depósitos',
+          brand: 'Coca cola',
+          price: 5.50,
+          qtd_stock: 866,
+          bar_codes: '1234567891011'
+        })
+
+      expect(res.status).toEqual(400)
+      expect(res.body).toHaveProperty('error')
     })
   })
 })
