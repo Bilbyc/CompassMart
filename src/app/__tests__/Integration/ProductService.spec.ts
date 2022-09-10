@@ -358,4 +358,33 @@ describe('Products Service', () => {
       expect(res.status).toEqual(400)
     })
   })
+
+  describe('DELETE /product/:id', () => {
+    it('should return 204 No Content', async () => {
+      const res = await server.delete(`/api/v1/product/${productId}`)
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(res.status).toEqual(204)
+    })
+
+    it('should return 401 Unauthorized - not passing bearer token', async () => {
+      const res = await server.delete(`/api/v1/product/${productId}`)
+
+      expect(res.status).toEqual(401)
+    })
+
+    it('should return 400 Bad Request - passing an invalid ID', async () => {
+      const res = await server.delete('/api/v1/product/123')
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(res.status).toEqual(400)
+    })
+
+    it('should return 404 Not Found - passing a valid but inexistent ID', async () => {
+      const res = await server.delete('/api/v1/product/5e9f1b9b9b9b9b9b9b9b9b9b')
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(res.status).toEqual(404)
+    })
+  })
 })
