@@ -114,4 +114,23 @@ describe('Products Service', () => {
       expect(res.status).toEqual(404)
     })
   })
+
+  describe('GET /product/low_stock', () => {
+    it('should return 200 OK', async () => {
+      const res = await server.get('/api/v1/product/low_stock')
+        .set('Authorization', `Bearer ${token}`)
+      expect(res.status).toEqual(200)
+    })
+
+    it('should return 401 Unauthorized - not passing bearer token', async () => {
+      const res = await server.get('/api/v1/product/low_stock')
+      expect(res.status).toEqual(401)
+    })
+
+    it('should return 200 - adding limit and offset query', async () => {
+      const res = await server.get('/api/v1/product/low_stock?limit=1&offset=1')
+        .set('Authorization', `Bearer ${token}`)
+      expect(res.status).toEqual(200)
+    })
+  })
 })
