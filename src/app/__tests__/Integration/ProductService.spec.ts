@@ -68,4 +68,17 @@ describe('Products Service', () => {
       expect(response.body).toHaveProperty('error')
     })
   })
+
+  describe('GET /product', () => {
+    it('should return 200 OK', async () => {
+      const res = await server.get('/api/v1/product')
+        .set('Authorization', `Bearer ${token}`)
+      expect(res.status).toEqual(200)
+    })
+
+    it('should return 401 Unauthorized - not passing bearer token', async () => {
+      const res = await server.get('/api/v1/product')
+      expect(res.status).toEqual(401)
+    })
+  })
 })
