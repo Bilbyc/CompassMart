@@ -81,4 +81,37 @@ describe('Products Service', () => {
       expect(res.status).toEqual(401)
     })
   })
+
+  describe('GET /product/:id', () => {
+    it('should return 200 OK', async () => {
+      const res = await server.get(`/api/v1/product/${productId}`)
+        .set('Authorization', `Bearer ${token}`)
+      expect(res.status).toEqual(200)
+    })
+
+    it('should return 200 - adding limit and offset query', async () => {
+      const res = await server.get('/api/v1/product?limit=1&offset=1')
+        .set('Authorization', `Bearer ${token}`)
+      expect(res.status).toEqual(200)
+    })
+
+    it('should return 401 Unauthorized - not passing bearer token', async () => {
+      const res = await server.get(`/api/v1/product/${productId}`)
+      expect(res.status).toEqual(401)
+    })
+
+    it('should return 400 Bad Request - passing an invalid ID', async () => {
+      const res = await server.get('/api/v1/product/123')
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(res.status).toEqual(400)
+    })
+
+    it('should return 404 Not Found - passing a valid but inexistent ID', async () => {
+      const res = await server.get('/api/v1/product/5e9f1b9b9b9b9b9b9b9b9b9b')
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(res.status).toEqual(404)
+    })
+  })
 })
