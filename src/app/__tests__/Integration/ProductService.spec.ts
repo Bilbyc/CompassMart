@@ -56,6 +56,7 @@ describe('Products Service', () => {
       expect(response.status).toBe(201)
       expect(response.body).toHaveProperty('_id')
     })
+
     it('should return 400 Bad Request - bar codes already exists', async () => {
       const response = await server.post('/api/v1/product')
         .set('Authorization', `Bearer ${token}`).send(testProduct)
@@ -63,9 +64,11 @@ describe('Products Service', () => {
       expect(response.body).toHaveProperty('details')
       expect(response.status).toBe(400)
     })
+
     it('should return 400 Bad Request - missing required property', async () => {
       const response = await server.post('/api/v1/product')
-        .set('Authorization', `Bearer ${token}`).send({
+        .set('Authorization', `Bearer ${token}`)
+        .send({
           title: 'Refrigerante',
           description: 'Coca Cola 600ml',
           department: 'Depósitos',
@@ -77,17 +80,36 @@ describe('Products Service', () => {
       expect(response.status).toBe(400)
       expect(response.body).toHaveProperty('error')
     })
+
+    it('should return 400 Bad Request - field cant be empty', async () => {
+      const response = await server.post('/api/v1/product')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          title: '',
+          description: 'Coca Cola 600ml',
+          department: 'Depósitos',
+          brand: 'Coca cola',
+          price: 5.50,
+          qtd_stock: 866,
+          bar_codes: '1234567891013'
+        })
+
+      expect(response.status).toBe(400)
+      expect(response.body).toHaveProperty('error')
+    })
   })
 
   describe('GET /product', () => {
     it('should return 200 OK', async () => {
       const res = await server.get('/api/v1/product')
         .set('Authorization', `Bearer ${token}`)
+
       expect(res.status).toEqual(200)
     })
 
     it('should return 401 Unauthorized - not passing bearer token', async () => {
       const res = await server.get('/api/v1/product')
+
       expect(res.status).toEqual(401)
     })
   })
@@ -96,17 +118,20 @@ describe('Products Service', () => {
     it('should return 200 OK', async () => {
       const res = await server.get(`/api/v1/product/${productId}`)
         .set('Authorization', `Bearer ${token}`)
+
       expect(res.status).toEqual(200)
     })
 
     it('should return 200 - adding limit and offset query', async () => {
       const res = await server.get('/api/v1/product?limit=1&offset=1')
         .set('Authorization', `Bearer ${token}`)
+
       expect(res.status).toEqual(200)
     })
 
     it('should return 401 Unauthorized - not passing bearer token', async () => {
       const res = await server.get(`/api/v1/product/${productId}`)
+
       expect(res.status).toEqual(401)
     })
 
@@ -129,6 +154,7 @@ describe('Products Service', () => {
     it('should return 200 OK', async () => {
       const res = await server.get('/api/v1/product/low_stock')
         .set('Authorization', `Bearer ${token}`)
+
       expect(res.status).toEqual(200)
     })
 
@@ -140,6 +166,7 @@ describe('Products Service', () => {
     it('should return 200 - adding limit and offset query', async () => {
       const res = await server.get('/api/v1/product/low_stock?limit=1&offset=1')
         .set('Authorization', `Bearer ${token}`)
+
       expect(res.status).toEqual(200)
     })
   })
@@ -147,7 +174,8 @@ describe('Products Service', () => {
   describe('PUT /product/:id', () => {
     it('should return 200 OK', async () => {
       const res = await server.put(`/api/v1/product/${productId}`)
-        .set('Authorization', `Bearer ${token}`).send({
+        .set('Authorization', `Bearer ${token}`)
+        .send({
           title: 'Refrigerante Cola',
           description: 'Coca Cola 900ml',
           department: 'Depósitos',
@@ -165,7 +193,8 @@ describe('Products Service', () => {
         .set('Authorization', `Bearer ${token}`).send(testProductTwo)
 
       const res = await server.put(`/api/v1/product/${product.body._id}`)
-        .set('Authorization', `Bearer ${token}`).send({
+        .set('Authorization', `Bearer ${token}`)
+        .send({
           title: 'Refrigerante Cola',
           description: 'Coca Cola 900ml',
           department: 'Depósitos',
@@ -241,7 +270,8 @@ describe('Products Service', () => {
 
     it('should return 400 Bad Request - field not allowed to be empty', async () => {
       const res = await server.put(`/api/v1/product/${productId}`)
-        .set('Authorization', `Bearer ${token}`).send({
+        .set('Authorization', `Bearer ${token}`)
+        .send({
           title: '',
           description: 'Coca Cola 600ml',
           department: 'Depósitos',
@@ -253,6 +283,79 @@ describe('Products Service', () => {
 
       expect(res.status).toEqual(400)
       expect(res.body).toHaveProperty('error')
+    })
+  })
+
+  describe('PATCH /product/:id', () => {
+    it('should return 200 OK', async () => {
+      const res = await server.patch(`/api/v1/product/${productId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          title: 'Refrigerante'
+        })
+
+      expect(res.status).toEqual(200)
+    })
+
+    it('Should return 400 Bad Request - bar codes already exists', async () => {
+      const product = await server.post('/api/v1/product')
+        .set('Authorization', `Bearer ${token}`).send(testProductTwo)
+
+      const res = await server.patch(`/api/v1/product/${product.body._id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          title: 'Refrigerante Laranja',
+          qtd_stock: 700,
+          bar_codes: '1234567891011'
+        })
+
+      expect(res.status).toEqual(400)
+      expect(res.body).toHaveProperty('details')
+    })
+
+    it('should return 401 Unauthorized - not passing bearer token', async () => {
+      const res = await server.patch(`/api/v1/product/${productId}`)
+        .send({
+          brand: 'Fanta',
+          price: 5.50,
+          qtd_stock: 120
+        })
+
+      expect(res.status).toEqual(401)
+    })
+
+    it('should return 400 Bad Request - passing an invalid ID', async () => {
+      const res = await server.patch('/api/v1/product/123')
+        .set('Authorization', `Bearer ${token}`).send({
+          brand: 'Fanta',
+          price: 5.50,
+          qtd_stock: 120
+        })
+
+      expect(res.status).toEqual(400)
+    })
+
+    it('should return 404 Not Found - passing a valid but inexistent ID', async () => {
+      const res = await server.patch('/api/v1/product/5e9f1b9b9b9b9b9b9b9b9b9b')
+        .set('Authorization', `Bearer ${token}`).send({
+          brand: 'Fanta',
+          price: 5.50,
+          qtd_stock: 120
+        })
+
+      expect(res.status).toEqual(404)
+    })
+
+    it('should return 400 Bad Request - field not allowed to be empty', async () => {
+      const res = await server.patch(`/api/v1/product/${productId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          brand: '',
+          price: 5.50,
+          qtd_stock: 120
+        })
+
+      expect(res.status).toEqual(400)
     })
   })
 })
