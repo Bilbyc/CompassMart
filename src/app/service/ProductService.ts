@@ -214,6 +214,7 @@ class ProductService {
       })
     }
 
+    const productKeys = Object.keys(products[1])
     const error: any[] = []
     let errorCounter: number = 0
     let successCounter: number = 0
@@ -225,40 +226,45 @@ class ProductService {
       let singleErrorMsg: string
       const errorProduct: object = { title: products[i].title, bar_codes: products[i].bar_codes, error: errorMsg }
 
-      async function checkNullOrUndefined (value: object) {
-        if (!value || value === undefined) {
+      async function checkNullOrUndefined (value: string | number | null) {
+        if (!value && value !== 0) {
           productErrors++
           errorCounter++
           return true
         }
       }
 
-      if (await checkNullOrUndefined(products[i].title)) {
-        errorMsg.push('Title is null or undefined')
+      async function checkIfString (content: string | number, key: string) {
+        if (typeof content !== 'string' && key !== 'price' && key !== 'qtd_stock') {
+          productErrors++
+          errorCounter++
+          return true
+        }
       }
 
-      if (await checkNullOrUndefined(products[i].description)) {
-        errorMsg.push('Description is null or undefined')
+      async function checkIfNumber (content: number, key: string) {
+        if (isNaN(content) && (key === 'price' || key === 'qtd_stock')) {
+          productErrors++
+          errorCounter++
+          return true
+        }
       }
 
-      if (await checkNullOrUndefined(products[i].department)) {
-        errorMsg.push('Department is null or undefined')
-      }
+      for (const key of productKeys) {
+        if (await checkNullOrUndefined(products[i][key])) {
+          singleErrorMsg = `${key} is null or undefined`
+          errorMsg.push(singleErrorMsg)
+        }
 
-      if (await checkNullOrUndefined(products[i].brand)) {
-        errorMsg.push('Brand is null or undefined')
-      }
+        if (await checkIfString(products[i][key], key)) {
+          singleErrorMsg = `${key} must be a string`
+          errorMsg.push(singleErrorMsg)
+        }
 
-      if (await checkNullOrUndefined(products[i].price)) {
-        errorMsg.push('Price is null or undefined')
-      }
-
-      if (await checkNullOrUndefined(products[i].qtd_stock)) {
-        errorMsg.push('Qtd Stock is null or undefined')
-      }
-
-      if (await checkNullOrUndefined(products[i].bar_codes)) {
-        errorMsg.push('Bar Codes is null or undefined')
+        if (await checkIfNumber(products[i][key], key)) {
+          singleErrorMsg = `${key} must be a number`
+          errorMsg.push(singleErrorMsg)
+        }
       }
 
       if (products[i].qtd_stock < 1 || products[i].qtd_stock > 100000) {
@@ -274,7 +280,7 @@ class ProductService {
       }
 
       if (products[i].bar_codes.length === 13 && !products[i].bar_codes.match(/^[0-9]{13}$/)) {
-        errorMsg.push('bar codes must be numbers')
+        errorMsg.push('bar codes must be a string of numbers')
         errorCounter++
         productErrors++
       }
