@@ -1,0 +1,701 @@
+{   "openapi": "3.0.0",
+    "info": {
+        "title": "CompassMart",
+        "version": "1.0.0",
+        "description": "An API to create and manage Products",
+        "license": {
+            "name": "MIT"
+        },
+        "contact": {
+            "name": "Carlos H Bilby",
+            "email": "carlos.bilby.std@gmail.com"
+        }
+    },
+    "servers": [{
+        "url": "http://localhost:3000/"
+    }],
+    "tags": [
+        {
+            "name": "Products",
+            "description": "API to manage products"
+        },
+        {
+            "name": "User",
+            "description": "Create and authenticate users"
+        }
+    ],
+    "paths": {
+        "/api/v1/product": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "parameters": [
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Select a offset",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Defines how much products will be returned",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "description": "Search by brand",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string"
+                        }
+                    },
+                    {
+                        "name": "department",
+                        "in": "query",
+                        "description": "Search by department",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string"
+                        }
+                    }
+                ],
+                "summary": "Get all products",
+                "description": "Returns a list of products",
+                "responses": {
+                    "200": {
+                        "description": "A list of products.",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Create a product",
+                "description": "Creates a new product",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Product"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Product created",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/product/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get a product",
+                "description": "Returns a product",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of product to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "objectId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a product.",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Update a product",
+                "description": "Updates a product",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of product to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "objectId"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Product"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product updated",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Update a product",
+                "description": "Updates a product",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of product to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "objectId"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "brand": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "Omo"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "double",
+                                        "example": 10.99
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product updated",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Delete a product",
+                "description": "Deletes a product",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of product to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "objectId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Product deleted"
+                    }
+                }
+            }
+        },
+        "/api/v1/product/low_stock": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "parameters": [
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Select a offset",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Defines how much products will be returned",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "summary": "Get low stock products",
+                "description": "Returns a list of products with stock below 100",
+                "responses": {
+                    "200": {
+                        "description": "A list of products.",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/product/marketplace/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get a product in mapper format",
+                "description": "Returns a product in mapper format",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of a product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "objectId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a product.",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/product/csv": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Create products from csv",
+                "description": "Returns a list of products",
+                "requestBody" : {
+                    "content" : {
+                      "multipart/form-data" : {
+                        "schema" : {
+                          "type" : "object",
+                          "properties" : {
+                            "file" : {
+                              "type" : "string",
+                              "format" : "binary"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                "responses": {
+                    "201": {
+                        "description": "Sucefully creates products from csv file",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+        "/api/v1/user": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Create a user",
+                "description": "Creates a new user",
+                "requestBody": {
+                    "description": "User to be created",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/authenticate": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Authenticate a user",
+                "description": "Authenticates a user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User authenticated",
+                        "content" : {
+                            "application/json" : {
+                              "schema" : {
+                                "type" : "array",
+                                "items" : {
+                                  "$ref" : "#/components/schemas/AuthenticateResponse"
+                                }
+                              }
+                            }
+                          }
+                    }
+                }
+            }
+        }
+        
+    },
+
+    "components": {
+        "schemas": {
+            "Product":{
+                "type": "object",
+                "required": [
+                    "title",
+                    "description",
+                    "department",
+                    "brand",
+                    "price",
+                    "qtd_stock",
+                    "bar_codes"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Product title",
+                        "example": "Detergente Líquido"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Product description",
+                        "example": "Detergente Líquido Neutro frasco 500ml"
+                    },
+                    "department": {
+                        "type": "string",
+                        "description": "Product department",
+                        "example": "Produtos de Limpeza"
+                    },
+                    "brand": {
+                        "type": "string",
+                        "description": "Product brand",
+                        "example": "Omo"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Product price",
+                        "example": 5.99
+                    },
+                    "qtd_stock": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Product quantity in stock",
+                        "example": 10
+                    },
+                    "bar_codes": {
+                        "type": "string",
+                        "description": "Product bar codes",
+                        "example": "7891111111111"
+                    }
+                }
+            },
+            "ProductResponse": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "description",
+                    "department",
+                    "brand",
+                    "price",
+                    "qtd_stock",
+                    "bar_codes"
+                ],
+                "properties": {
+                    "_id": {
+                        "type": "string",
+                        "format": "objectId",
+                        "description": "Product ID",
+                        "example": "5c9f6b9e9c1b9c0b8c8b4567"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Product title",
+                        "example": "Detergente Líquido"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Product description",
+                        "example": "Detergente Líquido Neutro frasco 500ml"
+                    },
+                    "department": {
+                        "type": "string",
+                        "description": "Product department",
+                        "example": "Produtos de Limpeza"
+                    },
+                    "brand": {
+                        "type": "string",
+                        "description": "Product brand",
+                        "example": "Omo"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Product price",
+                        "example": 5.99
+                    },
+                    "qtd_stock": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Product quantity in stock",
+                        "example": 10
+                    },
+                    "stock_control_enabled": {
+                        "type": "boolean",
+                        "example": true,
+                        "default": true,
+                        "description": "Product stock control enabled or not"
+                    },
+                    "bar_codes": {
+                        "type": "string",
+                        "description": "Product bar codes",
+                        "example": "7891111111111"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Product creation date",
+                        "example": "2019-03-27T15:00:00.000Z"
+    
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Product update date",
+                        "example": "2019-03-27T15:00:00.000Z"
+                    }
+                }
+            },
+            "User": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User email",
+                        "example": "example.mail@gmail.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User password",
+                        "example": "123456"
+                    }
+                }
+            },
+            "UserResponse": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "_id": {
+                        "type": "string",
+                        "format": "objectId",
+                        "description": "User ID",
+                        "example": "5c9f6b9e9c1b9c0b8c8b4567"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User email",
+                        "example": "example.mail@gmail.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User password",
+                        "example": "$2y$10$RR7uN28ao9cGLXDvdC2xHOVPpaKiQ4yQEZzpJVxPPOPyTRJ7Ptv8G"            
+                    }
+                }
+            },
+            "AuthenticateResponse": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User email",
+                        "example": "example.mail@gmail.com"
+                    },
+                    "token": {
+                        "type": "string",
+                        "description": "Authentication token",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMWEyZDNlODk0M2JkODRiYjRmMzBkYSIsImlhdCI6MTY2Mjk4NTI1MywiZXhwIjoxNjYzMDcxNjUzfQ.BY6HXP_8sgIrwyjI933jkwTKY-RIcyAAbtdF9oFGNDw"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

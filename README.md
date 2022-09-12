@@ -9,6 +9,7 @@
 =================
 <!--ts-->
    * **[Dependencies](#-dependencies)**
+   * **[Swagger Documentation](#-swagger-documentation)**
    * **[How to use](#-how-to-use)**
    * **[Endpoints](#-endpoints)**
       * [Create a product](#create-a-product)
@@ -30,7 +31,13 @@
 * [joi: 17.6.0](https://www.npmjs.com/package/joi)
 * [mongoose: 6.5.1](https://mongoosejs.com/)
 * [mongoose-paginate-v2: 1.7.0](https://www.npmjs.com/package/mongoose-paginate-v2)
-* [multer: 1.4.5-lts.1](https://www.npmjs.com/package/multer)
+* [multer: 1.4.5-lts.1](https://www.npmjs.com/package/multer)<br><br>
+
+
+📑 Swagger Documentation
+---------------
+Check out another project documentation [here](https://app.swaggerhub.com/apis/carlos.bilby/CompassMart/1.0.0#/default)<br><br>
+
 
 🎲 How to use
 ---------------
