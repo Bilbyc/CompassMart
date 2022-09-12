@@ -46,7 +46,7 @@
 ``` 
 /api/v1/api-docs
 ```
-**or through the following [link](https://app.swaggerhub.com/apis/carlos.bilby/CompassMart/2.0.0)**
+**or through the following [link](https://compass-mart-challenge-5.herokuapp.com/api/v1/api-docs/)**
 
 <br>
 
