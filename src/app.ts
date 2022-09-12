@@ -2,10 +2,13 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import routes from './routes/index.router'
+import morgan from './app/utils/loggers/morganConfig'
+import SwaggerUI from 'swagger-ui-express'
+import swaggerDocument from '../src/app/documentation/swagger.json'
 import './infra/database/mongo/index'
 
 dotenv.config({
-  path: '.env'
+  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env'
 })
 
 class App {
@@ -29,6 +32,8 @@ class App {
       })
     )
     this.server.use(cors())
+    this.server.use(morgan)
+    this.server.use('/api/v1/api-docs', SwaggerUI.serve, SwaggerUI.setup(swaggerDocument))
   }
 
   private routes (): void {
@@ -36,4 +41,4 @@ class App {
   }
 }
 
-export default App
+export default new App().init()

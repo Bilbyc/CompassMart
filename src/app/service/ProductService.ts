@@ -1,3 +1,4 @@
+import Logger from '../utils/loggers/winstonConfig'
 import { Readable } from 'stream'
 import BadRequestError from '../errors/BadRequestError'
 import { Types } from 'mongoose'
@@ -5,11 +6,13 @@ import { IProductResponse, IProduct } from '../interfaces/IProduct'
 import ProductRepository from '../repository/ProductRepository'
 import NotFoundError from '../errors/NotFoundError'
 import readline from 'readline'
+import mapper from '../../mapper/mapper.json'
 
 class ProductService {
   async create (payload: IProduct): Promise<IProductResponse> {
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
     if (foundBarCode) {
+      Logger.error(`[POST /api/v1/product]: Bar code already exists: '${payload.bar_codes}'`)
       throw new BadRequestError('Bar code already exists')
     }
 
@@ -18,18 +21,23 @@ class ProductService {
   }
 
   async update (payload: IProduct, productId: string): Promise<IProductResponse | null> {
-    if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID')
-
+    if (!Types.ObjectId.isValid(productId)) {
+      Logger.error(`[PUT /api/v1/product/:id]: ID:'${productId}' is not in a valid ID format`)
+      throw new BadRequestError('Not an valid ID')
+    }
     const foundProduct = await ProductRepository.getOne(productId)
     if (!foundProduct) {
+      Logger.error(`[PUT /api/v1/product/:id]: ID:'${productId}' doesnt exist or was deleted`)
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
-    if (foundBarCode) {
+    if (foundBarCode && foundBarCode._id.toString() !== productId) {
+      Logger.error(`[PUT /api/v1/product/:id]: Bar code already exists: '${payload.bar_codes}'`)
       throw new BadRequestError('Bar code already exists')
     }
 
     payload.stock_control_enabled = payload.qtd_stock > 0
+
     payload.updatedAt = new Date()
 
     const result = await ProductRepository.update(payload, productId)
@@ -37,18 +45,27 @@ class ProductService {
   }
 
   async patch (payload: IProduct, productId: string): Promise<IProductResponse | null> {
-    if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID')
-
+    if (!Types.ObjectId.isValid(productId)) {
+      Logger.error(`[PATCH /api/v1/product/:id]: ID:'${productId}' is not in a valid ID format`)
+      throw new BadRequestError('Not an valid ID')
+    }
     const foundProduct = await ProductRepository.getOne(productId)
     if (!foundProduct) {
+      Logger.error(`[PATCH /api/v1/product/:id]: ID:'${productId}' doesnt exist or was deleted`)
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
     const foundBarCode = await ProductRepository.getByBarCode(payload.bar_codes)
-    if (foundBarCode) {
+    if (foundBarCode && foundBarCode._id.toString() !== productId) {
+      Logger.error(`[PATCH /api/v1/product/:id]: Bar code already exists: '${payload.bar_codes}'`)
       throw new BadRequestError('Bar code already exists')
     }
 
-    payload.stock_control_enabled = payload.qtd_stock > 0
+    if (payload.qtd_stock !== undefined) {
+      payload.stock_control_enabled = payload.qtd_stock > 0
+    } else {
+      payload.stock_control_enabled = foundProduct.qtd_stock > 0
+    }
+
     payload.updatedAt = new Date()
 
     const result = await ProductRepository.patch(payload, productId)
@@ -66,10 +83,14 @@ class ProductService {
   }
 
   async getOne (productId: string) {
-    if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID')
+    if (!Types.ObjectId.isValid(productId)) {
+      Logger.error(`[GET /api/v1/product/:id]: ID:'${productId}' is not in a valid ID format`)
+      throw new BadRequestError('Not an valid ID')
+    }
 
     const foundProduct = await ProductRepository.getOne(productId)
     if (!foundProduct) {
+      Logger.error(`[GET /api/v1/product/:id]: ID:'${productId}' doesnt exist or was deleted`)
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
 
@@ -77,12 +98,94 @@ class ProductService {
     return result
   }
 
-  async delete (productId: string) {
-    if (!Types.ObjectId.isValid(productId)) throw new BadRequestError('Not an valid ID')
+  async getMapper (productId: string) {
+    if (!Types.ObjectId.isValid(productId)) {
+      Logger.error(`[GET /api/v1/product/marketplace/:id]: ID:'${productId}' is not in a valid ID format`)
+      throw new BadRequestError('Not an valid ID')
+    }
 
+    const foundProduct: IProductResponse | null = await ProductRepository.getOne(productId)
+    if (!foundProduct) {
+      Logger.error(`[GET /api/v1/product/marketplace/:id]: ID:'${productId}' doesnt exist or was deleted`)
+      throw new NotFoundError('Product doesnt exist or was deleted')
+    }
+    const mapperFields: any = mapper.fields
+
+    const productKeys: Array<string> = []
+    const productKeysValues: Array<string> = []
+    const fieldProduct: Array<string> = []
+    const fieldMarket: Array<Array<string>> = []
+    const dataTypes: Array<string> = []
+
+    for (const value of mapperFields) {
+      productKeys.push(Object.values(value)[0] as string)
+      productKeysValues.push(Object.values(value)[1] as string)
+      if (Object.keys(value)[2] === 'type') {
+        dataTypes.push(Object.values(value)[2] as string)
+      } else {
+        dataTypes.push(Object.values(value)[3] as string)
+      }
+    }
+
+    for (let i = 0; i < productKeys.length; i++) {
+      fieldProduct.push(productKeys[i].split('.')[1])
+      fieldMarket.push(productKeysValues[i].split('.'))
+    }
+
+    const lastFMarketKey: Array<string> = []
+    for (let i = 0; i < fieldMarket.length; i++) {
+      lastFMarketKey.push(productKeysValues[i].split('.')[fieldMarket[i].length - 1])
+    }
+
+    const finalProduct: Object = {}
+    for (let i = 0; i < productKeys.length; i++) {
+      switch (dataTypes[i]) {
+        case 'text':
+          finalProduct[lastFMarketKey[i]] = (foundProduct[fieldProduct[i]]).toString()
+          break
+        case 'number':
+          finalProduct[lastFMarketKey[i]] = parseFloat(foundProduct[fieldProduct[i]])
+          if (isNaN(finalProduct[lastFMarketKey[i]])) {
+            Logger.error(`[GET /api/v1/product/marketplace/:id] (ID:'${productId}') field '${[lastFMarketKey[i]]}'/'${fieldProduct[i]}' cant be converted to number`)
+            throw new BadRequestError(`The field ${lastFMarketKey[i]} cant be a number`)
+          }
+          break
+        case 'array':
+          finalProduct[lastFMarketKey[i]] = [foundProduct[fieldProduct[i]]]
+          break
+        case 'boolean':
+          finalProduct[lastFMarketKey[i]] = foundProduct[fieldProduct[i]]
+          if (typeof finalProduct[lastFMarketKey[i]] !== 'boolean') {
+            Logger.error(`[GET /api/v1/product/marketplace/:id] (ID:'${productId}') field '${[lastFMarketKey[i]]}'/'${fieldProduct[i]}' cant be converted to boolean`)
+            throw new BadRequestError(`The field ${lastFMarketKey[i]} cant be a boolean`)
+          }
+          break
+      }
+    }
+
+    function buildMapperProduct (fieldMarket: Array<Array<string>>) {
+      const marketplace = {}
+      for (const prop of fieldMarket) {
+        let obj = marketplace
+        for (const p of prop) {
+          obj = obj[p] = finalProduct[p] = obj[p] = finalProduct[p] || {}
+        }
+      }
+      return marketplace
+    }
+
+    return buildMapperProduct(fieldMarket)
+  }
+
+  async delete (productId: string) {
+    if (!Types.ObjectId.isValid(productId)) {
+      Logger.error(`[DELETE /api/v1/product/:id]: ID:'${productId}' is not in a valid ID format`)
+      throw new BadRequestError('Not an valid ID')
+    }
     const foundProduct = await ProductRepository.getOne(productId)
     if (!foundProduct) {
-      throw new NotFoundError('Product doesnt exist')
+      Logger.error(`[DELETE /api/v1/product/:id]: ID:'${productId}' doesnt exist or was already deleted`)
+      throw new NotFoundError('Product doesnt exist or was already deleted')
     }
 
     const result = await ProductRepository.delete(productId)
@@ -104,7 +207,6 @@ class ProductService {
 
     for await (const line of productsLine) {
       const productLineSplit = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
-      console.log(productLineSplit)
 
       products.push({
         title: productLineSplit[0].replace(/["\\]+/g, ''),
@@ -118,6 +220,7 @@ class ProductService {
       })
     }
 
+    const productKeys = Object.keys(products[1])
     const error: any[] = []
     let errorCounter: number = 0
     let successCounter: number = 0
@@ -125,80 +228,99 @@ class ProductService {
     for (let i = 0; i < products.length; i++) {
       let productErrors = 0
 
-      async function checkNullOrUndefined (value: object) {
-        if (!value || value === undefined) {
+      const errorMsg: string[] = []
+      let singleErrorMsg: string
+      const errorProduct: object = { title: products[i].title, bar_codes: products[i].bar_codes, error: errorMsg }
+
+      async function checkNullOrUndefined (value: string | number | null) {
+        if (!value && value !== 0) {
           productErrors++
           errorCounter++
           return true
         }
       }
 
-      if (await checkNullOrUndefined(products[i].title)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Title is null or undefined' })
+      async function checkIfString (content: string | number, key: string) {
+        if (typeof content !== 'string' && key !== 'price' && key !== 'qtd_stock') {
+          productErrors++
+          errorCounter++
+          return true
+        }
       }
 
-      if (await checkNullOrUndefined(products[i].description)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Description is null or undefined' })
+      async function checkIfNumber (content: number, key: string) {
+        if (isNaN(content) && (key === 'price' || key === 'qtd_stock')) {
+          productErrors++
+          errorCounter++
+          return true
+        }
       }
 
-      if (await checkNullOrUndefined(products[i].department)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Department is null or undefined' })
-      }
+      for (const key of productKeys) {
+        if (await checkNullOrUndefined(products[i][key])) {
+          singleErrorMsg = `${key} is null or undefined`
+          errorMsg.push(singleErrorMsg)
+        }
 
-      if (await checkNullOrUndefined(products[i].brand)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Brand is null or undefined' })
-      }
+        if (await checkIfString(products[i][key], key)) {
+          singleErrorMsg = `${key} must be a string`
+          errorMsg.push(singleErrorMsg)
+        }
 
-      if (await checkNullOrUndefined(products[i].price)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Price is null or undefined' })
-      }
-
-      if (await checkNullOrUndefined(products[i].qtd_stock)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Qtd Stock is null or undefined' })
-      }
-
-      if (await checkNullOrUndefined(products[i].bar_codes)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Bar Codes is null or undefined' })
+        if (await checkIfNumber(products[i][key], key)) {
+          singleErrorMsg = `${key} must be a number`
+          errorMsg.push(singleErrorMsg)
+        }
       }
 
       if (products[i].qtd_stock < 1 || products[i].qtd_stock > 100000) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'Stock quantity must be minimum 1 and at max 100000' })
+        errorMsg.push('Stock quantity must be minimum 1 and at max 100000')
         errorCounter++
         productErrors++
       }
 
       if (products[i].bar_codes.length !== 13) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'bar codes length must be 13' })
+        errorMsg.push('bar codes length must be 13')
         errorCounter++
         productErrors++
       }
 
       if (products[i].bar_codes.length === 13 && !products[i].bar_codes.match(/^[0-9]{13}$/)) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'bar codes must be numbers' })
+        errorMsg.push('bar codes must be a string of numbers')
         errorCounter++
         productErrors++
       }
 
       if (products[i].qtd_stock < 0 || products[i].qtd_stock > 100000) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'stock must be between 0 and 100.000' })
+        errorMsg.push('stock must be between 0 and 100.000')
         errorCounter++
         productErrors++
       }
 
       if (products[i].price < 0.01 || products[i].price > 1000) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'price must be between 0.01 and 1000' })
+        errorMsg.push('price must be between 0.01 and 1000')
         errorCounter++
         productErrors++
       }
 
       const foundBarCode = await ProductRepository.getByBarCode(products[i].bar_codes)
       if (foundBarCode) {
-        error.push({ title: products[i].title, bar_code: products[i].bar_codes, error: 'bar code already exists' })
+        errorMsg.push('bar code already exists')
         errorCounter++
         productErrors++
-      } else if (productErrors === 0) {
+      }
+      if (productErrors === 0) {
         ProductRepository.create(products[i])
         successCounter++
+      }
+      if (productErrors === 1) {
+        singleErrorMsg = errorMsg[0]
+        Logger.error(`[POST /api/v1/product/csv] Product '${products[i].title}' with bar code '${products[i].bar_codes}' has an error: '${singleErrorMsg}'`)
+        error.push({ title: products[i].title, bar_codes: products[i].bar_codes, error: singleErrorMsg })
+      }
+      if (productErrors > 1) {
+        Logger.error(`[POST /api/v1/product/csv] Product '${products[i].title}' with bar code '${products[i].bar_codes}' has multiple errors: '${errorMsg}'`)
+        error.push(errorProduct)
       }
     }
 
