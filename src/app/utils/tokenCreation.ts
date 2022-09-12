@@ -1,4 +1,4 @@
-import { IUserResponse } from './../interfaces/iUser'
+import { IUserResponse } from './../interfaces/IUser'
 import jwt from 'jsonwebtoken'
 
 export function createTokenJWT (user: IUserResponse) {
