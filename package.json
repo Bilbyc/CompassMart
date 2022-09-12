@@ -1,10 +1,15 @@
 {
-  "name": "arquitetura-node-typescript",
+  "name": "compass-mart",
   "version": "1.0.0",
+  "engine": {
+    "node": "16.14.2"
+  },
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules src/server.ts",
+    "build": "rimraf dist && tsc",
+    "postinstall": "npm run build",
+    "start": "node dist/server.js",
     "dev": "nodemon -r --exec ts-node dotenv/config ./src/server.ts",
     "prepare": "husky install",
     "test": "jest --forceExit",

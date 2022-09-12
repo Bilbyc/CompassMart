@@ -1,7 +1,6 @@
 import Logger from '../utils/loggers/winstonConfig'
-import { IUserResponse } from './../interfaces/iUser'
 import UserRepository from '../repository/UserRepository'
-import { IUser } from '../interfaces/IUser'
+import { IUser, IUserResponse } from '../interfaces/IUser'
 import bcrypt from 'bcrypt'
 import { createTokenJWT } from '../utils/tokenCreation'
 import NotFoundError from '../errors/NotFoundError'
