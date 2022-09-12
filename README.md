@@ -12,14 +12,6 @@
    * **[Swagger Documentation](#-swagger-documentation)**
    * **[How to use](#-how-to-use)**
    * **[Endpoints](#-endpoints)**
-      * [Create a product](#create-a-product)
-      * [Create products from CSV File](#create-products-from-csv-file)
-      * [List all products](#list-all-products)
-      * [List low stock products](#list-low-stock-products)
-      * [Get product by ID](#get-product-by-id)
-      * [Update product by ID (PATCH)](#update-product-by-id-patch)
-      * [Update product by ID (PUT)](#update-product-by-id-put)
-      * [Delete product](#delete-product)
    * **[Author](#-author)**
 <!--te-->
 
@@ -33,6 +25,13 @@
 * [mongoose-paginate-v2: 1.7.0](https://www.npmjs.com/package/mongoose-paginate-v2)
 * [multer: 1.4.5-lts.1](https://www.npmjs.com/package/multer)<br><br>
 
+🎗️ Heroku App
+--------------
+**Acess CompassMart online app via:**
+
+[Compass Mart](https://compass-mart-challenge-5.herokuapp.com/)
+<br><br>
+
 
 📑 Swagger Documentation
 ---------------
@@ -40,6 +39,7 @@
 ``` 
 /api/v1/api-docs
 ```
+<br>
 
 🎲 How to use
 ---------------
