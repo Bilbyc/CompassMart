@@ -9,6 +9,7 @@
 =================
 <!--ts-->
    * **[Dependencies](#-dependencies)**
+   * **[Heroku App](#-heroku-app)**
    * **[Swagger Documentation](#-swagger-documentation)**
    * **[How to use](#-how-to-use)**
    * **[Endpoints](#-endpoints)**
@@ -25,7 +26,7 @@
 * [mongoose-paginate-v2: 1.7.0](https://www.npmjs.com/package/mongoose-paginate-v2)
 * [multer: 1.4.5-lts.1](https://www.npmjs.com/package/multer)<br><br>
 
-🎗️ Heroku App
+🔮 Heroku App
 --------------
 **Acess CompassMart online app via:**
 
@@ -39,6 +40,8 @@
 ``` 
 /api/v1/api-docs
 ```
+**or through the following [link](https://app.swaggerhub.com/apis/carlos.bilby/CompassMart/2.0.0)**
+
 <br>
 
 🎲 How to use
@@ -46,7 +49,7 @@
 
 ```bash
 # Clone this repository
-$ git clone https://github.com/Bilbyc/CompassMart.git
+$ git clone https://github.com/Bilbyc/CompassMart-Challenge-5.git
 
 # Install dependencies
 $ npm install
