@@ -37,6 +37,7 @@ class ProductService {
     }
 
     payload.stock_control_enabled = payload.qtd_stock > 0
+
     payload.updatedAt = new Date()
 
     const result = await ProductRepository.update(payload, productId)
@@ -59,7 +60,12 @@ class ProductService {
       throw new BadRequestError('Bar code already exists')
     }
 
-    payload.stock_control_enabled = payload.qtd_stock > 0
+    if (payload.qtd_stock !== undefined) {
+      payload.stock_control_enabled = payload.qtd_stock > 0
+    } else {
+      payload.stock_control_enabled = foundProduct.qtd_stock > 0
+    }
+
     payload.updatedAt = new Date()
 
     const result = await ProductRepository.patch(payload, productId)
