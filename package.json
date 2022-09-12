@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules src/server.ts",
     "dev": "nodemon -r --exec ts-node dotenv/config ./src/server.ts",
     "prepare": "husky install",
     "test": "jest --forceExit",
