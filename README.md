@@ -24,7 +24,13 @@
 * [joi: 17.6.0](https://www.npmjs.com/package/joi)
 * [mongoose: 6.5.1](https://mongoosejs.com/)
 * [mongoose-paginate-v2: 1.7.0](https://www.npmjs.com/package/mongoose-paginate-v2)
-* [multer: 1.4.5-lts.1](https://www.npmjs.com/package/multer)<br><br>
+* [multer: 1.4.5-lts.1](https://www.npmjs.com/package/multer)
+* bcrypt": 5.0.1
+* swagger-ui-express: 4.5.0
+* winston: 3.8.2
+* jsonwebtoken: 8.5.1,
+* morgan: 1.10.0
+* eslint-config-standard: 17.0.0<br><br>
 
 🔮 Heroku App
 --------------
