@@ -53,15 +53,31 @@ $ npm install
 
 ```
 ### Set up Database and Port infos (.env)
-Create a file named **.env** in the project root directory, copy and paste below content on it and insert your mongodb acess and port infos
+**For development mode**
+
+Create a file named **.env** in the project root directory, copy and paste below content on it and insert your mongodb acess and port infos (default port is 3000)
 ```
 MONGO_DB_URL =
 PORT =
+CHAVE_JWT =     
+```
+**For running tests**
+
+Create a file named **.env.test** in the project root directory, copy and paste below content on it and insert your mongodb acess and port infos
+*Tests creates and then **erases** all data from the database inserted here, so dont use the same one for running tests and development*
+```
+MONGO_DB_URL =    
+PORT =
+CHAVE_JWT =     
 ```
 **Run application**
 ```
 $ npm run dev
+or
+$ npm run test
 ```
+Obs: Theres also a *.env.example* file inside project root directory you can freely use
+
 
 📌 Endpoints
 ============
