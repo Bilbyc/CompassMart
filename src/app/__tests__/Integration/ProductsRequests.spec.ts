@@ -113,6 +113,31 @@ describe('Products Service', () => {
     })
   })
 
+  describe('POST /product/csv', () => {
+    it('should return 201 - and create a product', async () => {
+      const response = await request(App).post('/api/v1/product/csv')
+        .set('Authorization', `Bearer ${token}`)
+        .attach('file', 'src/app/__tests__/filesForTest/productsList.csv')
+
+      expect(response.status).toBe(201)
+      expect(response.body).toHaveProperty('sucess')
+    })
+
+    it('should return 401 Unauthorized - Not passing bearer token', async () => {
+      const response = await request(App).post('/api/v1/product/csv')
+        .attach('file', 'src/app/__tests__/filesForTest/productsList.csv')
+
+      expect(response.status).toBe(401)
+    })
+
+    it('should return 400 Bad Request - Missing file', async () => {
+      const response = await request(App).post('/api/v1/product/csv')
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(response.status).toBe(400)
+    })
+  })
+
   describe('GET /product', () => {
     it('should return 200 OK', async () => {
       const res = await request(App).get('/api/v1/product')
