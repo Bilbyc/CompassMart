@@ -44,14 +44,14 @@ describe('User Requests', () => {
       const response = await server.post('/api/v1/user').send(missingFieldUser)
 
       expect(response.status).toBe(400)
-      expect(response.body).toHaveProperty('error')
+      expect(response.body).toHaveProperty('details')
     })
 
     it('should return 400 - email cant be empty, password must be string', async () => {
       const response = await server.post('/api/v1/user').send(badlyFormattedUser)
 
       expect(response.status).toBe(400)
-      expect(response.body).toHaveProperty('error')
+      expect(response.body).toHaveProperty('details')
     })
   })
 

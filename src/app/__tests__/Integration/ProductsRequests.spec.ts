@@ -92,7 +92,7 @@ describe('Products Service', () => {
         })
 
       expect(response.status).toBe(400)
-      expect(response.body).toHaveProperty('error')
+      expect(response.body).toHaveProperty('details')
     })
 
     it('should return 400 Bad Request - field cant be empty', async () => {
@@ -109,7 +109,7 @@ describe('Products Service', () => {
         })
 
       expect(response.status).toBe(400)
-      expect(response.body).toHaveProperty('error')
+      expect(response.body).toHaveProperty('details')
     })
   })
 
@@ -295,7 +295,7 @@ describe('Products Service', () => {
         })
 
       expect(res.status).toEqual(400)
-      expect(res.body).toHaveProperty('error')
+      expect(res.body).toHaveProperty('details')
 
       await request(App).delete(`/api/v1/product/${product.body._id}`).set('Authorization', `Bearer ${token}`)
     })
@@ -317,7 +317,7 @@ describe('Products Service', () => {
         })
 
       expect(res.status).toEqual(400)
-      expect(res.body).toHaveProperty('error')
+      expect(res.body).toHaveProperty('details')
 
       await request(App).delete(`/api/v1/product/${product.body._id}`).set('Authorization', `Bearer ${token}`)
     })
