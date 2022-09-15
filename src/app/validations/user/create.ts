@@ -17,7 +17,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     return res.status(400).json({
       message: 'Bad Request Error',
       errors: error.details.length,
-      error: error.details.map(e => e.message)
+      details: error.details.map(e => e.message)
     })
   }
 }

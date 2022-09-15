@@ -4,9 +4,17 @@ import request from 'supertest'
 
 let token
 
-let InDBProduct
-
 const testProduct = {
+  title: 'Refrigerante',
+  description: 'Pepsi Cola 600ml',
+  department: 'Depósitos',
+  brand: 'Pepsi',
+  price: 5.50,
+  qtd_stock: 900,
+  bar_codes: '1234567891000'
+}
+
+const productForPost = {
   title: 'Refrigerante',
   description: 'Coca Cola 600ml',
   department: 'Depósitos',
@@ -16,14 +24,14 @@ const testProduct = {
   bar_codes: '1234567891011'
 }
 
-const testProductTwo = {
-  title: 'Refrigerante',
+const inBaseProduct = {
+  title: 'Batata frita',
   description: 'Pepsi Cola 600ml',
   department: 'Depósitos',
   brand: 'Pepsi',
   price: 5.50,
   qtd_stock: 900,
-  bar_codes: '1234567891000'
+  bar_codes: '1234567891888'
 }
 
 beforeAll(async () => {
@@ -37,16 +45,18 @@ beforeAll(async () => {
     password: '12345'
   })
 
-  InDBProduct = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${authenticate.body.token}`).send(testProduct)
-
   token = authenticate.body.token
+
+  await request(App).post('/api/v1/product')
+    .set('Authorization', `Bearer ${authenticate.body.token}`)
+    .send(inBaseProduct)
 })
 
 describe('Products Service', () => {
   describe('POST /product', () => {
     it('should return 201 - and create a product', async () => {
       const response = await request(App).post('/api/v1/product')
-        .set('Authorization', `Bearer ${token}`).send(testProductTwo)
+        .set('Authorization', `Bearer ${token}`).send(productForPost)
 
       await request(App).delete(`/api/v1/product/${response.body._id}`).set('Authorization', `Bearer ${token}`)
       expect(response.status).toBe(201)
@@ -55,7 +65,15 @@ describe('Products Service', () => {
 
     it('should return 400 Bad Request - bar codes already exists', async () => {
       const response = await request(App).post('/api/v1/product')
-        .set('Authorization', `Bearer ${token}`).send(testProduct)
+        .set('Authorization', `Bearer ${token}`).send({
+          title: 'Refrigerante',
+          description: 'Coca Cola 600ml',
+          department: 'Depósitos',
+          brand: 'Coca cola',
+          price: 5.50,
+          qtd_stock: 866,
+          bar_codes: inBaseProduct.bar_codes
+        })
 
       expect(response.status).toBe(400)
       expect(response.body).toHaveProperty('details')
@@ -74,7 +92,7 @@ describe('Products Service', () => {
         })
 
       expect(response.status).toBe(400)
-      expect(response.body).toHaveProperty('error')
+      expect(response.body).toHaveProperty('details')
     })
 
     it('should return 400 Bad Request - field cant be empty', async () => {
@@ -91,7 +109,32 @@ describe('Products Service', () => {
         })
 
       expect(response.status).toBe(400)
-      expect(response.body).toHaveProperty('error')
+      expect(response.body).toHaveProperty('details')
+    })
+  })
+
+  describe('POST /product/csv', () => {
+    it('should return 201 - and create a product', async () => {
+      const response = await request(App).post('/api/v1/product/csv')
+        .set('Authorization', `Bearer ${token}`)
+        .attach('file', 'src/app/__tests__/filesForTest/productsList.csv')
+
+      expect(response.status).toBe(201)
+      expect(response.body).toHaveProperty('sucess')
+    })
+
+    it('should return 401 Unauthorized - Not passing bearer token', async () => {
+      const response = await request(App).post('/api/v1/product/csv')
+        .attach('file', 'src/app/__tests__/filesForTest/productsList.csv')
+
+      expect(response.status).toBe(401)
+    })
+
+    it('should return 400 Bad Request - Missing file', async () => {
+      const response = await request(App).post('/api/v1/product/csv')
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(response.status).toBe(400)
     })
   })
 
@@ -119,7 +162,7 @@ describe('Products Service', () => {
 
   describe('GET /product/:id', () => {
     it('should return 200 OK', async () => {
-      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`).send(testProductTwo)
+      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).get(`/api/v1/product/${product.body._id}`)
         .set('Authorization', `Bearer ${token}`)
@@ -129,7 +172,7 @@ describe('Products Service', () => {
     })
 
     it('should return 401 Unauthorized - not passing bearer token', async () => {
-      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`).send(testProductTwo)
+      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).get(`/api/v1/product/${product.body._id}`)
 
@@ -147,6 +190,45 @@ describe('Products Service', () => {
 
     it('should return 404 Not Found - passing a valid but inexistent ID', async () => {
       const res = await request(App).get('/api/v1/product/5e9f1b9b9b9b9b9b9b9b9b9b')
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(res.status).toEqual(404)
+    })
+  })
+
+  describe('GET /product/marketplace/:id', () => {
+    it('should return 200 OK', async () => {
+      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`)
+        .send(testProduct)
+
+      const res = await request(App).get(`/api/v1/product/marketplace/${product.body._id}`)
+        .set('Authorization', `Bearer ${token}`)
+
+      await request(App).delete(`/api/v1/product/${product.body._id}`).set('Authorization', `Bearer ${token}`)
+      expect(res.status).toEqual(200)
+      expect(res.body).toHaveProperty('walmart')
+    })
+
+    it('should return 401 Unauthorized - not passing bearer token', async () => {
+      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`)
+        .send(testProduct)
+
+      const res = await request(App).get(`/api/v1/product/marketplace/${product.body._id}`)
+
+      expect(res.status).toEqual(401)
+
+      await request(App).delete(`/api/v1/product/${product.body._id}`).set('Authorization', `Bearer ${token}`)
+    })
+
+    it('should return 400 Bad Request - passing an invalid ID', async () => {
+      const res = await request(App).get('/api/v1/product/marketplace/123')
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(res.status).toEqual(400)
+    })
+
+    it('should return 404 Not Found - passing a valid but inexistent ID', async () => {
+      const res = await request(App).get('/api/v1/product/marketplace/5e9f1b9b9b9b9b9b9b9b9b9b')
         .set('Authorization', `Bearer ${token}`)
 
       expect(res.status).toEqual(404)
@@ -176,17 +258,17 @@ describe('Products Service', () => {
 
   describe('PUT /product/:id', () => {
     it('should return 200 OK', async () => {
-      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`).send(testProductTwo)
+      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).put(`/api/v1/product/${product.body._id}`)
         .set('Authorization', `Bearer ${token}`).send({
-          title: 'Refrigerante',
-          description: 'Coca Cola 600ml',
-          department: 'Depósitos',
-          brand: 'Coca cola',
-          price: 5.50,
-          qtd_stock: 866,
-          bar_codes: '1234567891013'
+          title: testProduct.title,
+          description: testProduct.description,
+          department: 'Mercearia',
+          brand: testProduct.brand,
+          price: testProduct.price,
+          qtd_stock: 900,
+          bar_codes: testProduct.bar_codes
         })
 
       await request(App).delete(`/api/v1/product/${product.body._id}`).set('Authorization', `Bearer ${token}`)
@@ -195,18 +277,18 @@ describe('Products Service', () => {
 
     it('Should return 400 Bad Request - bar codes already exists', async () => {
       const product = await request(App).post('/api/v1/product')
-        .set('Authorization', `Bearer ${token}`).send(testProductTwo)
+        .set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).put(`/api/v1/product/${product.body._id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({
-          title: 'Refrigerante Cola',
-          description: 'Coca Cola 900ml',
-          department: 'Depósitos',
-          brand: 'Coca cola',
-          price: 5.50,
-          qtd_stock: 700,
-          bar_codes: InDBProduct.body.bar_codes
+          title: testProduct.title,
+          description: testProduct.description,
+          department: 'Mercearia',
+          brand: testProduct.brand,
+          price: testProduct.price,
+          qtd_stock: 900,
+          bar_codes: inBaseProduct.bar_codes
         })
       await request(App).delete(`/api/v1/product/${product.body._id}`).set('Authorization', `Bearer ${token}`)
 
@@ -216,16 +298,16 @@ describe('Products Service', () => {
 
     it('should return 401 Unauthorized - not passing bearer token', async () => {
       const product = await request(App).post('/api/v1/product')
-        .set('Authorization', `Bearer ${token}`).send(testProductTwo)
+        .set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).put(`/api/v1/product/${product.body._id}`)
         .send({
-          title: 'Refrigerante',
-          description: 'Coca Cola 600ml',
-          department: 'Depósitos',
-          brand: 'Coca cola',
-          price: 5.50,
-          qtd_stock: 866,
+          title: testProduct.title,
+          description: testProduct.description,
+          department: 'Mercearia',
+          brand: testProduct.brand,
+          price: testProduct.price,
+          qtd_stock: 900,
           bar_codes: '1234567891011'
         })
 
@@ -237,13 +319,13 @@ describe('Products Service', () => {
     it('should return 400 Bad Request - passing an invalid ID', async () => {
       const res = await request(App).put('/api/v1/product/123')
         .set('Authorization', `Bearer ${token}`).send({
-          title: 'Refrigerante',
-          description: 'Coca Cola 600ml',
-          department: 'Depósitos',
-          brand: 'Coca cola',
-          price: 5.50,
-          qtd_stock: 866,
-          bar_codes: '1234567891011'
+          title: testProduct.title,
+          description: testProduct.description,
+          department: 'Mercearia',
+          brand: testProduct.brand,
+          price: testProduct.price,
+          qtd_stock: 900,
+          bar_codes: testProduct.bar_codes
         })
 
       expect(res.status).toEqual(400)
@@ -252,56 +334,54 @@ describe('Products Service', () => {
     it('should return 404 Not Found - passing a valid but inexistent ID', async () => {
       const res = await request(App).put('/api/v1/product/5e9f1b9b9b9b9b9b9b9b9b9b')
         .set('Authorization', `Bearer ${token}`).send({
-          title: 'Refrigerante',
-          description: 'Coca Cola 600ml',
-          department: 'Depósitos',
-          brand: 'Coca cola',
-          price: 5.50,
-          qtd_stock: 866,
-          bar_codes: '1234567891011'
+          title: testProduct.title,
+          description: testProduct.description,
+          department: 'Mercearia',
+          brand: testProduct.brand,
+          price: 8.90,
+          qtd_stock: 900,
+          bar_codes: testProduct.bar_codes
         })
 
       expect(res.status).toEqual(404)
     })
 
-    it('should return 400 Bad Request - missing a required property', async () => {
+    it('should return 400 Bad Request - missing a required properties', async () => {
       const product = await request(App).post('/api/v1/product')
-        .set('Authorization', `Bearer ${token}`).send(testProductTwo)
+        .set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).put(`/api/v1/product/${product.body._id}`)
         .set('Authorization', `Bearer ${token}`).send({
-          title: 'Refrigerante',
-          description: 'Coca Cola 600ml',
-          brand: 'Coca cola',
-          price: 5.50,
-          qtd_stock: 866,
-          bar_codes: '1234567891011'
+          title: testProduct.title,
+          description: testProduct.description,
+          qtd_stock: 900,
+          bar_codes: testProduct.bar_codes
         })
 
       expect(res.status).toEqual(400)
-      expect(res.body).toHaveProperty('error')
+      expect(res.body).toHaveProperty('details')
 
       await request(App).delete(`/api/v1/product/${product.body._id}`).set('Authorization', `Bearer ${token}`)
     })
 
     it('should return 400 Bad Request - field not allowed to be empty', async () => {
       const product = await request(App).post('/api/v1/product')
-        .set('Authorization', `Bearer ${token}`).send(testProductTwo)
+        .set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).put(`/api/v1/product/${product.body._id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           title: '',
-          description: 'Coca Cola 600ml',
-          department: 'Depósitos',
-          brand: 'Coca cola',
-          price: 5.50,
-          qtd_stock: 866,
-          bar_codes: '1234567891011'
+          description: testProduct.description,
+          department: '',
+          brand: testProduct.brand,
+          price: '',
+          qtd_stock: '',
+          bar_codes: testProduct.bar_codes
         })
 
       expect(res.status).toEqual(400)
-      expect(res.body).toHaveProperty('error')
+      expect(res.body).toHaveProperty('details')
 
       await request(App).delete(`/api/v1/product/${product.body._id}`).set('Authorization', `Bearer ${token}`)
     })
@@ -309,7 +389,7 @@ describe('Products Service', () => {
 
   describe('PATCH /product/:id', () => {
     it('should return 200 OK', async () => {
-      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`).send(testProductTwo)
+      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).patch(`/api/v1/product/${product.body._id}`)
         .set('Authorization', `Bearer ${token}`).send({
@@ -323,12 +403,12 @@ describe('Products Service', () => {
 
     it('Should return 400 Bad Request - bar codes already exists', async () => {
       const product = await request(App).post('/api/v1/product')
-        .set('Authorization', `Bearer ${token}`).send(testProductTwo)
+        .set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).patch(`/api/v1/product/${product.body._id}`)
         .set('Authorization', `Bearer ${token}`)
         .send({
-          bar_codes: InDBProduct.body.bar_codes
+          bar_codes: inBaseProduct.bar_codes
         })
 
       expect(res.status).toEqual(400)
@@ -339,7 +419,7 @@ describe('Products Service', () => {
 
     it('should return 401 Unauthorized - not passing bearer token', async () => {
       const product = await request(App).post('/api/v1/product')
-        .set('Authorization', `Bearer ${token}`).send(testProductTwo)
+        .set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).patch(`/api/v1/product/${product.body._id}`)
         .send({
@@ -377,7 +457,7 @@ describe('Products Service', () => {
 
     it('should return 400 Bad Request - field not allowed to be empty', async () => {
       const product = await request(App).post('/api/v1/product')
-        .set('Authorization', `Bearer ${token}`).send(testProductTwo)
+        .set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).patch(`/api/v1/product/${product.body._id}`)
         .set('Authorization', `Bearer ${token}`)
@@ -394,7 +474,7 @@ describe('Products Service', () => {
 
   describe('DELETE /product/:id', () => {
     it('should return 204 No content', async () => {
-      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`).send(testProductTwo)
+      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).delete(`/api/v1/product/${product.body._id}`)
         .set('Authorization', `Bearer ${token}`)
@@ -404,7 +484,7 @@ describe('Products Service', () => {
 
     it('should return 401 Unauthorized - not passing bearer token', async () => {
       const product = await request(App).post('/api/v1/product')
-        .set('Authorization', `Bearer ${token}`).send(testProductTwo)
+        .set('Authorization', `Bearer ${token}`).send(testProduct)
 
       const res = await request(App).delete(`/api/v1/product/${product.body._id}`)
 

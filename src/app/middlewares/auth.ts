@@ -5,7 +5,12 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization
 
   if (!authHeader) {
-    return res.status(401).json({ message: 'Token not provided' })
+    return res.status(401).json({
+      message: 'Unauthorized',
+      details: [{
+        message: 'No token provided'
+      }]
+    })
   }
 
   const [, token] = authHeader.split(' ')
@@ -14,6 +19,11 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     await jwt.verify(token, process.env.CHAVE_JWT)
     next()
   } catch (error) {
-    return res.status(401).json({ message: 'Token invalid' })
+    return res.status(401).json({
+      message: 'Unauthorized',
+      details: [{
+        message: 'Invalid/Expired token'
+      }]
+    })
   }
 }
