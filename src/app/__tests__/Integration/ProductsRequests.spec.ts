@@ -171,6 +171,45 @@ describe('Products Service', () => {
     })
   })
 
+  describe('GET /product/marketplace/:id', () => {
+    it('should return 200 OK', async () => {
+      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`)
+        .send(testProduct)
+
+      const res = await request(App).get(`/api/v1/product/marketplace/${product.body._id}`)
+        .set('Authorization', `Bearer ${token}`)
+
+      await request(App).delete(`/api/v1/product/${product.body._id}`).set('Authorization', `Bearer ${token}`)
+      expect(res.status).toEqual(200)
+      expect(res.body).toHaveProperty('walmart')
+    })
+
+    it('should return 401 Unauthorized - not passing bearer token', async () => {
+      const product = await request(App).post('/api/v1/product').set('Authorization', `Bearer ${token}`)
+        .send(testProduct)
+
+      const res = await request(App).get(`/api/v1/product/marketplace/${product.body._id}`)
+
+      expect(res.status).toEqual(401)
+
+      await request(App).delete(`/api/v1/product/${product.body._id}`).set('Authorization', `Bearer ${token}`)
+    })
+
+    it('should return 400 Bad Request - passing an invalid ID', async () => {
+      const res = await request(App).get('/api/v1/product/marketplace/123')
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(res.status).toEqual(400)
+    })
+
+    it('should return 404 Not Found - passing a valid but inexistent ID', async () => {
+      const res = await request(App).get('/api/v1/product/marketplace/5e9f1b9b9b9b9b9b9b9b9b9b')
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(res.status).toEqual(404)
+    })
+  })
+
   describe('GET /product/low_stock', () => {
     it('should return 200 OK', async () => {
       const res = await request(App).get('/api/v1/product/low_stock')
