@@ -159,11 +159,12 @@ class ProductService {
             const breaked = (finalProduct[lastFMarketKey[i]]).match(new RegExp(`.{${mapperFields[i].optional[1]}}`, 'g'))
             breaked.push((finalProduct[lastFMarketKey[i]]).slice(valueLength - (valueLength % mapperFields[i].optional[1])))
             if (valueLength % mapperFields[i].optional[1] === 0) {
-              console.log('entrou')
               breaked.pop()
             }
             finalProduct[lastFMarketKey[i]] = breaked
             break
+          case 'currency':
+            finalProduct[lastFMarketKey[i]] = Number(finalProduct[lastFMarketKey[i]]).toLocaleString(mapperFields[i].optional[1], { style: 'currency', currency: mapperFields[i].optional[2] })
         }
       }
     }
