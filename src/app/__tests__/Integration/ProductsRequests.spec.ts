@@ -206,7 +206,6 @@ describe('Products Service', () => {
 
       await request(App).delete(`/api/v1/product/${product.body._id}`).set('Authorization', `Bearer ${token}`)
       expect(res.status).toEqual(200)
-      expect(res.body).toHaveProperty('walmart')
     })
 
     it('should return 401 Unauthorized - not passing bearer token', async () => {

@@ -109,36 +109,23 @@ class ProductService {
       Logger.error(`[GET /api/v1/product/marketplace/:id]: ID:'${productId}' doesnt exist or was deleted`)
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
+
     const mapperFields: any = mapper.fields
 
-    const productKeys: Array<string> = []
-    const productKeysValues: Array<string> = []
+    const dataTypes: Array<string> = []
     const fieldProduct: Array<string> = []
     const fieldMarket: Array<Array<string>> = []
-    const dataTypes: Array<string> = []
+    const lastFMarketKey: Array<string> = []
 
     for (const value of mapperFields) {
-      productKeys.push(Object.values(value)[0] as string)
-      productKeysValues.push(Object.values(value)[1] as string)
-      if (Object.keys(value)[2] === 'type') {
-        dataTypes.push(Object.values(value)[2] as string)
-      } else {
-        dataTypes.push(Object.values(value)[3] as string)
-      }
-    }
-
-    for (let i = 0; i < productKeys.length; i++) {
-      fieldProduct.push(productKeys[i].split('.')[1])
-      fieldMarket.push(productKeysValues[i].split('.'))
-    }
-
-    const lastFMarketKey: Array<string> = []
-    for (let i = 0; i < fieldMarket.length; i++) {
-      lastFMarketKey.push(productKeysValues[i].split('.')[fieldMarket[i].length - 1])
+      dataTypes.push(value.type)
+      fieldProduct.push(value.fieldProduct.split('.')[1])
+      fieldMarket.push(value.fieldMarket.split('.'))
+      lastFMarketKey.push(value.fieldMarket.split('.')[value.fieldMarket.split('.').length - 1])
     }
 
     const finalProduct: Object = {}
-    for (let i = 0; i < productKeys.length; i++) {
+    for (let i = 0; i < lastFMarketKey.length; i++) {
       switch (dataTypes[i]) {
         case 'text':
           finalProduct[lastFMarketKey[i]] = (foundProduct[fieldProduct[i]]).toString()
