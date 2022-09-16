@@ -11,7 +11,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       brand: Joi.string().required(),
       price: Joi.number().required().min(0.01).max(1000),
       qtd_stock: Joi.number().required().min(0).less(100001),
-      bar_codes: Joi.string().required().length(13)
+      bar_codes: Joi.string().required().length(13).regex(/^[0-9]{13}$/)
     })
 
     const { error } = await schema.validate(req.body, { abortEarly: false })
