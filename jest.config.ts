@@ -10,5 +10,5 @@ export default {
     '**/?(*.)+(spec|test).[tj]s?(x)'
   ],
   setupFilesAfterEnv: ['./src/app/__tests__/databaseConnection.ts'],
-  collectCoverageFrom: ['src/**']
+  collectCoverageFrom: ['src/app/**/*.ts']
 }

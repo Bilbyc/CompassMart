@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import Logger from '../utils/loggers/winstonConfig'
 import { Readable } from 'stream'
 import BadRequestError from '../errors/BadRequestError'
@@ -109,36 +110,25 @@ class ProductService {
       Logger.error(`[GET /api/v1/product/marketplace/:id]: ID:'${productId}' doesnt exist or was deleted`)
       throw new NotFoundError('Product doesnt exist or was deleted')
     }
+
     const mapperFields: any = mapper.fields
 
-    const productKeys: Array<string> = []
-    const productKeysValues: Array<string> = []
+    const dataTypes: Array<string> = []
     const fieldProduct: Array<string> = []
     const fieldMarket: Array<Array<string>> = []
-    const dataTypes: Array<string> = []
+    const lastFMarketKey: Array<string> = []
+    const optional: Array<boolean> = []
 
     for (const value of mapperFields) {
-      productKeys.push(Object.values(value)[0] as string)
-      productKeysValues.push(Object.values(value)[1] as string)
-      if (Object.keys(value)[2] === 'type') {
-        dataTypes.push(Object.values(value)[2] as string)
-      } else {
-        dataTypes.push(Object.values(value)[3] as string)
-      }
-    }
-
-    for (let i = 0; i < productKeys.length; i++) {
-      fieldProduct.push(productKeys[i].split('.')[1])
-      fieldMarket.push(productKeysValues[i].split('.'))
-    }
-
-    const lastFMarketKey: Array<string> = []
-    for (let i = 0; i < fieldMarket.length; i++) {
-      lastFMarketKey.push(productKeysValues[i].split('.')[fieldMarket[i].length - 1])
+      dataTypes.push(value.type)
+      fieldProduct.push(value.fieldProduct.split('.')[1])
+      fieldMarket.push(value.fieldMarket.split('.'))
+      lastFMarketKey.push(value.fieldMarket.split('.')[value.fieldMarket.split('.').length - 1])
+      optional.push(value.optional)
     }
 
     const finalProduct: Object = {}
-    for (let i = 0; i < productKeys.length; i++) {
+    for (let i = 0; i < lastFMarketKey.length; i++) {
       switch (dataTypes[i]) {
         case 'text':
           finalProduct[lastFMarketKey[i]] = (foundProduct[fieldProduct[i]]).toString()
@@ -160,6 +150,22 @@ class ProductService {
             throw new BadRequestError(`The field ${lastFMarketKey[i]} cant be a boolean`)
           }
           break
+      }
+      if (mapperFields[i].optional !== undefined) {
+        switch (mapperFields[i].optional[0]) {
+          case 'break':
+            finalProduct[lastFMarketKey[i]] = finalProduct[lastFMarketKey[i]].toString()
+            const valueLength = (finalProduct[lastFMarketKey[i]]).length
+            const breaked = (finalProduct[lastFMarketKey[i]]).match(new RegExp(`.{${mapperFields[i].optional[1]}}`, 'g'))
+            breaked.push((finalProduct[lastFMarketKey[i]]).slice(valueLength - (valueLength % mapperFields[i].optional[1])))
+            if (valueLength % mapperFields[i].optional[1] === 0) {
+              breaked.pop()
+            }
+            finalProduct[lastFMarketKey[i]] = breaked
+            break
+          case 'currency':
+            finalProduct[lastFMarketKey[i]] = Number(finalProduct[lastFMarketKey[i]]).toLocaleString(mapperFields[i].optional[1], { style: 'currency', currency: mapperFields[i].optional[2] })
+        }
       }
     }
 
