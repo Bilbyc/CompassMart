@@ -56,6 +56,9 @@
 # Clone this repository
 $ git clone https://github.com/Bilbyc/CompassMart-Challenge-5.git
 
+# Access project root folder
+$ cd compassmart-challenge-5
+
 # Install dependencies
 $ npm install
 
