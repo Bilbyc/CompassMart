@@ -96,7 +96,46 @@
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/Unauthorized"
+                                },
+                                "examples": {
+                                    "Invalid Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Invalid Token"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "No Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Token Not Provided"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -125,6 +164,79 @@
                                 }
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/BadRequestError"
+                                },
+                                "examples": {
+                                    "Invalid body": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "errors": 2,
+                                            "details": [
+                                                 "title is required",
+                                                 "Price is required"
+                                            ]
+                                        }
+                                    },
+                                    "Duplicate Value": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "errors": 1,
+                                            "details": [
+                                                 "Bar code already exists"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/Unauthorized"
+                                },
+                                "examples": {
+                                    "Invalid Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Invalid Token"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "No Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Token Not Provided"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -150,7 +262,7 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of product to update",
+                        "description": "ID of product to find",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -165,6 +277,68 @@
                             "application/json" : {
                                 "schema" : {
                                   "$ref" : "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/BadRequestError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/Unauthorized"
+                                },
+                                "examples": {
+                                    "Invalid Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Invalid Token"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "No Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Token Not Provided"
+                                                }
+                                            ]
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -210,6 +384,109 @@
                             "application/json" : {
                                 "schema" : {
                                   "$ref" : "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/BadRequestError"
+                                },
+                                "examples": {
+                                    "Invalid body": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "errors": 2,
+                                            "details": [
+                                                 "title is required",
+                                                 "Price is required"
+                                            ]
+                                        }
+                                    },
+                                    "Duplicate Value": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "errors": 1,
+                                            "details": [
+                                                 "Bar code already exists"
+                                            ]
+                                        }
+                                    },
+                                    "Invalid ID": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "details": [
+                                                {
+                                                    "message": "Invalid ID"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "Null Field": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "details": [
+                                                {
+                                                    "message": "Field cannot be null"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/Unauthorized"
+                                },
+                                "examples": {
+                                    "Invalid Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Invalid Token"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "No Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Token Not Provided"
+                                                }
+                                            ]
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -270,6 +547,99 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/BadRequestError"
+                                },
+                                "examples": {
+                                    "Duplicate Value": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "errors": 1,
+                                            "details": [
+                                                 "Bar code already exists"
+                                            ]
+                                        }
+                                    },
+                                    "Invalid ID": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "details": [
+                                                {
+                                                    "message": "Invalid ID"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "Null Field": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "details": [
+                                                {
+                                                    "message": "Field cannot be null"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/Unauthorized"
+                                },
+                                "examples": {
+                                    "Invalid Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Invalid Token"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "No Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Token Not Provided"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -299,6 +669,68 @@
                 "responses": {
                     "204": {
                         "description": "Product deleted"
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/BadRequestError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/Unauthorized"
+                                },
+                                "examples": {
+                                    "Invalid Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Invalid Token"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "No Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Token Not Provided"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -349,6 +781,48 @@
                                 }
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/Unauthorized"
+                                },
+                                "examples": {
+                                    "Invalid Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Invalid Token"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "No Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Token Not Provided"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -384,6 +858,68 @@
                             "application/json" : {
                                 "schema" : {
                                   "$ref" : "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/BadRequestError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/Unauthorized"
+                                },
+                                "examples": {
+                                    "Invalid Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Invalid Token"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "No Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Token Not Provided"
+                                                }
+                                            ]
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -428,6 +964,80 @@
                                 }
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/BadRequestError"
+                                },
+                                "examples": {
+                                    "Invalid file": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "details": [
+                                                {
+                                                    "message": "Invalid file type"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "No File": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "details": [
+                                                {
+                                                    "message": "No File Provided"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/Unauthorized"
+                                },
+                                "examples": {
+                                    "Invalid Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Invalid Token"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "No Token": {
+                                        "value": {
+                                            "message": "Unauthorized",
+                                            "details": [
+                                                {
+                                                 "message": "Token Not Provided"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -457,6 +1067,48 @@
                             "application/json" : {
                                 "schema" : {
                                   "$ref" : "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/BadRequestError"
+                                },
+                                "examples": {
+                                    "Duplicate Email": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "details": [
+                                                {
+                                                    "message": "Email already exists"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "Null Field": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "details": [
+                                                {
+                                                    "message": "Field cannot be null"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }        
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/InternalServerError"
                                 }
                             }
                         }
@@ -492,7 +1144,49 @@
                                 }
                               }
                             }
-                          }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/BadRequestError"
+                                },
+                                "examples": {
+                                    "Invalid Email": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "details": [
+                                                {
+                                                    "message": "Email not found"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "Invalid Password": {
+                                        "value": {
+                                            "message": "Bad Request",
+                                            "details": [
+                                                {
+                                                    "message": "Password does not match"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }        
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json" : {
+                                "schema" : {
+                                  "$ref" : "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -689,6 +1383,110 @@
                         "type": "string",
                         "description": "Authentication token",
                         "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMWEyZDNlODk0M2JkODRiYjRmMzBkYSIsImlhdCI6MTY2Mjk4NTI1MywiZXhwIjoxNjYzMDcxNjUzfQ.BY6HXP_8sgIrwyjI933jkwTKY-RIcyAAbtdF9oFGNDw"
+                    }
+                }
+            },
+            "BadRequestError":{
+                "type": "object",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Bad Request"
+                    },
+                    "details": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error message",
+                                    "example": "ID not in a valid format"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "NotFoundError":{
+                "type": "object",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Not Found"
+                    },
+                    "details": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error message",
+                                    "example": "Product doesnt exist or was deleted"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Unauthorized":{
+                "type": "object",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Unauthorized"
+                    },
+                    "details": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error message",
+                                    "example": "Invalid token"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "InternalServerError": {
+                "type": "object",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Internal Server Error"
+                    },
+                    "details": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error message",
+                                    "example": "Internal Server Error"
+                                }
+                            }
+                        }
                     }
                 }
             }
