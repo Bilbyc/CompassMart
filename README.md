@@ -29,8 +29,7 @@
 * swagger-ui-express: 4.5.0
 * winston: 3.8.2
 * jsonwebtoken: 8.5.1,
-* morgan: 1.10.0
-* eslint-config-standard: 17.0.0<br><br>
+* morgan: 1.10.0<br><br>
 
 🔮 Heroku App
 --------------
