@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import Logger from '../utils/loggers/winstonConfig'
 import { Readable } from 'stream'
 import BadRequestError from '../errors/BadRequestError'
@@ -116,12 +117,14 @@ class ProductService {
     const fieldProduct: Array<string> = []
     const fieldMarket: Array<Array<string>> = []
     const lastFMarketKey: Array<string> = []
+    const optional: Array<boolean> = []
 
     for (const value of mapperFields) {
       dataTypes.push(value.type)
       fieldProduct.push(value.fieldProduct.split('.')[1])
       fieldMarket.push(value.fieldMarket.split('.'))
       lastFMarketKey.push(value.fieldMarket.split('.')[value.fieldMarket.split('.').length - 1])
+      optional.push(value.optional)
     }
 
     const finalProduct: Object = {}
@@ -147,6 +150,22 @@ class ProductService {
             throw new BadRequestError(`The field ${lastFMarketKey[i]} cant be a boolean`)
           }
           break
+      }
+      if (mapperFields[i].optional !== undefined) {
+        switch (mapperFields[i].optional[0]) {
+          case 'break':
+            finalProduct[lastFMarketKey[i]] = finalProduct[lastFMarketKey[i]].toString()
+            const valueLength = (finalProduct[lastFMarketKey[i]]).length
+            const breaked = (finalProduct[lastFMarketKey[i]]).match(new RegExp(`.{${mapperFields[i].optional[1]}}`, 'g'))
+            breaked.push((finalProduct[lastFMarketKey[i]]).slice(valueLength - (valueLength % mapperFields[i].optional[1])))
+            if (valueLength % mapperFields[i].optional[1] === 0) {
+              breaked.pop()
+            }
+            finalProduct[lastFMarketKey[i]] = breaked
+            break
+          case 'currency':
+            finalProduct[lastFMarketKey[i]] = Number(finalProduct[lastFMarketKey[i]]).toLocaleString(mapperFields[i].optional[1], { style: 'currency', currency: mapperFields[i].optional[2] })
+        }
       }
     }
 
