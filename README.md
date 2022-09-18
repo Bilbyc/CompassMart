@@ -75,6 +75,7 @@ CHAVE_JWT =
 **For running tests**
 
 Create a file named **.env.test** in the project root directory, copy and paste below content on it and insert your mongodb acess and port infos
+
 *Tests creates and then **erases** all data from the database inserted here, so dont use the same one for running tests and development*
 ```
 MONGO_DB_URL =    
